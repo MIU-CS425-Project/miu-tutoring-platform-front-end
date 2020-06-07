@@ -1,0 +1,67 @@
+<template>
+  <v-item-group>
+      <v-row v-if="!loading">
+        <v-col
+          v-for="tutorialGroup in tutorialGroups"
+          :key="tutorialGroup.id"
+          cols="12"
+          md="3"
+        >
+          <v-item>
+            <v-card
+                        dark
+              color="#385F73"
+            >
+         <v-card-title class="headline">{{tutorialGroup.tutorialGroupNumber}}</v-card-title>
+
+            <v-card-subtitle>Student group support.</v-card-subtitle>
+
+            <v-card-actions>
+                         <router-link :to="{ name: 'tutorial-group-chat',
+                              params: { tutorialGroupId: tutorialGroup.tutorialGroupId } }">
+                     <v-btn text>Join</v-btn>   
+                    </router-link>
+            </v-card-actions>
+            </v-card>
+          </v-item>
+        </v-col>
+      </v-row>
+       <v-sheet
+          class="px-3 pt-3 pb-3"
+          v-if="loading"
+        >
+        <v-row>
+          <v-col
+              cols="12"
+              md="3"
+              height="30px"
+          >
+          <v-skeleton-loader
+          class="mx-auto"
+          type="card"
+          >
+          </v-skeleton-loader>
+            </v-col>
+          </v-row>
+        </v-sheet>
+  </v-item-group>
+</template>
+<script>
+import { TutorialGroupAPI } from "@/api";
+
+export default {
+  name: "GroupList",
+  data() {
+    return {
+      tutorialGroups: [],
+      loading: true
+    };
+  },
+  async created() {   
+    TutorialGroupAPI.all().then(res => {
+      this.tutorialGroups = res;   
+      this.loading = false; 
+    })
+  }
+}
+</script>
