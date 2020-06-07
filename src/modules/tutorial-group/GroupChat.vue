@@ -86,6 +86,7 @@ import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
 import AccountService from "@/services";
 import { TutorialGroupAPI, PostAPI } from "@/api";
+const API_ROOT = process.env.VUE_APP_API_ROOT;
 
 export default {
   name: "groupchat",
@@ -124,7 +125,7 @@ export default {
       }
     },
     connect() {
-      this.socket = new SockJS("http://localhost:8080/tutorial");
+      this.socket = new SockJS(API_ROOT+"/tutorial");
       this.stompClient = Stomp.over(this.socket);
       this.stompClient.connect(
         {},
