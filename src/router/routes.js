@@ -12,7 +12,7 @@ const routes = [
     redirect: "/tutorial-group-list"
   },
   {
-    path: "/tutorial-group-list",
+    path: "/",
     component: AppLayout,
     children: [
       ...accountRoutes,
