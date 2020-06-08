@@ -1,7 +1,7 @@
 import { API_ROOT } from ".";
 import Request from "./request";
 
-const PATH = "tutorialgroup";
+const PATH = "/tutorialgroup";
 
 const TutorialGroupAPI = {
     get(id) {
