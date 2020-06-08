@@ -6,7 +6,7 @@ import StudentAPI from "./student.api";
 import TutorialGroupAPI from "./tutorial-group.api";
 import PostAPI from "./post.api"
 
-const API_ROOT = process.env.VUE_APP_API_ROOT+"/api/v1/";
+const API_ROOT = process.env.VUE_APP_API_ROOT+"/api/v1";
 export {
   API_ROOT,
   AuthAPI,
