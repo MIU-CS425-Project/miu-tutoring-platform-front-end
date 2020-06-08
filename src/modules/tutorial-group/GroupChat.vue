@@ -49,7 +49,7 @@
     <v-timeline dense clipped >
       <v-timeline-item
         fill-dot
-        class="white--text mb-12"
+        class="white--text"
         color="primary"
         large
       >
@@ -60,13 +60,14 @@
           hide-details
           flat
           :label="connected ? 'Leave a comment...' : 'Trying to connect'"
-          solo
+          outlined
           :disabled="!connected"
           @keydown.enter="send"
+          class="mr-2 pb-0"
         >
           <template v-slot:append v-if="connected">
             <v-btn
-              class="mx-0"
+              class="mb-5"
               @click="send"
               outlined
             >
@@ -82,7 +83,7 @@
         <v-timeline-item
           v-for="message in received_messages"
           :key="message.id"
-          class="mb-4 mr-4"
+          class="pb-0 mr-4"
           :color="message.type == 'JOIN' ? 'green' : message.type == 'LEAVE' ? 'red' : 'grey'"
           small
           right
@@ -101,7 +102,10 @@
                  {{message.content}}
                  </span>
             </v-col>
-            <v-col class="text-right" cols="5" >{{message.createdOn | moment("from", "now")}}</v-col>
+            <v-col class="text-right" cols="5" >
+              <span v-if="API_ROOT.includes('localhost')">{{message.createdOn | moment("from", "now")}}</span>
+              <span v-else>{{ $moment.utc(message.createdOn).local().fromNow()}}</span>
+              </v-col>
           </v-row>
         </v-timeline-item>
       </v-slide-x-transition>
@@ -134,6 +138,7 @@ export default {
   name: "groupchat",
   data() {
     return {
+      API_ROOT: API_ROOT,
       received_messages: [],
       connected: false,
       user: AccountService.getProfile(),
