@@ -72,13 +72,13 @@ export default {
         {
           title: "Faculty",
           icon: "people",
-          route: "faculty-list",
+          route: "student-list",
           allowedUserRoles: ["ROLE_ADMIN"]
         }, 
         {
           title: "Courses",
           icon: "people",
-          route: "course-list",
+          route: "student-list",
           allowedUserRoles: ["ROLE_ADMIN"]
         },
         {
@@ -90,7 +90,7 @@ export default {
         {
           title: "Tutor Requests",
           icon: "people",
-          route: "tutor-request-list",
+          route: "tutorialgroup-list",
           allowedUserRoles: ["ROLE_FACULTY"]
         },    
       ]
