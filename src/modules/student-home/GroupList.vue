@@ -14,10 +14,10 @@
             >
          <v-card-title class="headline">{{tutorialGroup.tutorialGroupNumber}}</v-card-title>
 
-            <v-card-subtitle>Student group support.</v-card-subtitle>
+            <v-card-subtitle>{{tutorialGroup.tutorialGroupNumber}} - Introduction to Algorithms</v-card-subtitle>
 
             <v-card-actions>
-                         <router-link :to="{ name: 'tutorial-group-chat',
+                         <router-link :to="{ name: 'group-chat',
                               params: { tutorialGroupId: tutorialGroup.tutorialGroupId } }">
                      <v-btn text>Join</v-btn>   
                     </router-link>

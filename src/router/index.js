@@ -23,8 +23,10 @@ router.beforeEach((to, from, next) => {
     if(roles.includes("ROLE_ADMIN")){
       next({ name: "student-list" });
     } else if(roles.includes("ROLE_STUDENT")){
-      next({ name: "tutorial-group-list" });
-    }
+      next({ name: "group-list" });
+    } else if(roles.includes("ROLE_FACULTY")){
+      next({ name: "tutorialgroup-list" });
+    } 
   } else {
     next();
   }
