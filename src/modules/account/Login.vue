@@ -137,7 +137,9 @@ export default {
               if(roles.includes("ROLE_ADMIN")){
                 this.$router.push({ name: "student-list" });
               } else if(roles.includes("ROLE_STUDENT")){
-                this.$router.push({ name: "tutorial-group-list" });
+                this.$router.push({ name: "group-list" });
+              } else if(roles.includes("ROLE_FACULTY")){
+                this.$router.push({ name: "tutorialgroup-list" });
               }
             })
             .catch(err => {
