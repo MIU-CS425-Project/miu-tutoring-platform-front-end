@@ -244,7 +244,7 @@ export default {
   },
   mounted() {
     this.connect();
-    this.isTutor = AccountService.getProfile().name == "mike@miu.edu";
+    this.isTutor = AccountService.getProfile().name == "tutor@miu.edu";
     this.cmOptions.readOnly = !this.isTutor;
   },
   beforeDestroy(){
