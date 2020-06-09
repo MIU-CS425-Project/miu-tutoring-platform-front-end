@@ -122,6 +122,28 @@
               </v-dialog>
             </v-flex>
           </v-layout>
+          <v-layout row>
+            <v-flex xs6>
+              <v-text-field
+                :rules="emailRules"
+                v-model="item.username"
+                label="Email"
+                name="username"
+                filled
+              />
+            </v-flex>
+            <v-flex 
+              xs6 
+              pl-3>
+              <v-text-field
+                :rules="usernameRules"
+                v-model="item.password"
+                label="Password"
+                name="password"
+                filled                
+              />
+            </v-flex>
+          </v-layout>
         </v-card>
       </v-form>
     </v-flex>
@@ -140,6 +162,14 @@ export default {
       enrollmentModal: false,
       item: {},
       requiredRules: [v => !!v || "This field is required"],
+      emailRules: [
+        v => !!v || 'Email is required',
+        v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+      ],
+      passwordRules: [
+        v => !!v || 'Password is required',
+        v => v.length >= 3 || 'Password must be greater than three characters'
+      ]
     };
   },
   methods: {
@@ -148,14 +178,23 @@ export default {
       if(this.valid){
         this.item.enrollmentDate = this.enrollmentDate;
           StudentAPI.create(this.item)
-            .then(() => {
-              this.item = {};
-              this.$notify({
-                type: "success",
-                title: "Success",
-                message: "Student created successfully"
-              });
-              this.$router.push({ name: "student-list" });
+            .then(
+              res => {
+              if(!res){
+                this.$notify({
+                    type: "danger",
+                    title: "Error",
+                    message: "There is a user with the given email"
+                });
+              } else{
+                this.$notify({
+                  type: "success",
+                  title: "Success",
+                  message: "Student created successfully"
+                });
+                this.item = {};
+                this.$router.push({ name: "student-list" });
+              }
             })
         }
     }
