@@ -9,7 +9,7 @@ import tutorialGroupRoutes from "@/modules/tutorial-group/tutorial-group.routes"
 const routes = [
   {
     path: "/",
-    redirect: "/tutorial-group-list"
+    redirect: { name: "login"}
   },
   {
     path: "/",

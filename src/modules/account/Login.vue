@@ -133,9 +133,21 @@ export default {
           AccountService.login(this.user.email, this.user.password)
             .then(() => {
               this.$refs.form.reset();
-              this.$router.push({ name: "tutorial-group-list" });
+              const roles = AccountService.getRoles();
+              if(roles.includes("ROLE_ADMIN")){
+                this.$router.push({ name: "student-list" });
+              } else if(roles.includes("ROLE_STUDENT")){
+                this.$router.push({ name: "tutorial-group-list" });
+              }
             })
             .catch(err => {
+              if(err == "Forbidden"){
+                this.$notify({
+                  type: "danger",
+                  title: "Error",
+                  message: "Incorrect username or password"
+                });
+              }              
               this.loading = false;
               self.authError = err;
             });
