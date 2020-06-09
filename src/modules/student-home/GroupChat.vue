@@ -46,13 +46,13 @@
               >
                 <v-tab
                 >  
-                  Code
+                  Live Code Share
                 </v-tab>
               <v-tab
               @click="getUsers"
                 >
                   
-                  Users
+                  Participants
                 </v-tab>
               </v-tabs>
 
@@ -69,6 +69,7 @@
                 >
                   <v-card flat>
                     <v-card-text>
+                      <v-divider />
                       <v-list>
                             <v-list-item
                                 v-for="item in users"
@@ -297,7 +298,7 @@ export default {
             type: 'LEAVE', tutorialGroup: this.tutorialGroupDetail};
         this.stompClient.send("/app/chat.register/"+this.tutorialGroupId, JSON.stringify(msg), {});
         this.stompClient.disconnect();
-        this.$router.push({ name: "tutorial-group-list" });
+        this.$router.push({ name: "group-list" });
       }
       this.connected = false;
     },
