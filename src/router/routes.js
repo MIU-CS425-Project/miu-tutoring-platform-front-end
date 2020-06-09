@@ -4,7 +4,8 @@ import NotFoundPage from "@/components/NotFoundPage.vue";
 
 import accountRoutes from "@/modules/account/account.routes";
 import studentRoutes from "@/modules/student/student.routes";
-import tutorialGroupRoutes from "@/modules/tutorial-group/tutorial-group.routes";
+import studentHomeRoutes from "@/modules/student-home/student-home.routes";
+import tutorialGroupRoutes from "@/modules/tutorial-group/tutorial-group.routes"
 
 const routes = [
   {
@@ -17,6 +18,7 @@ const routes = [
     children: [
       ...accountRoutes,
       ...studentRoutes,
+      ...studentHomeRoutes,
       ...tutorialGroupRoutes
     ]
   },
