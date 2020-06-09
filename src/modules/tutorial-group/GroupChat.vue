@@ -19,12 +19,13 @@
         offset-md="8">
           <v-select
           :items="languages"
-          v-model="cmOptions.mode"
           label="Languages"
           item-text="text"
           item-value="value"
           outlined
           dense
+          :value="cmOptions.mode"
+          @input="onLanguageChange"
           class="mr-2 mt-7"
         ></v-select>
         </v-col>
@@ -36,16 +37,67 @@
       <v-divider></v-divider>
 
       <v-card-text>
-          <v-layout row>
-            <v-flex xs7 pl-2>
-              <codemirror ref="myCm"
-                :value="code" 
-                :options="cmOptions"
-                @input="onCmCodeChange">
-              </codemirror>
+        <v-layout row>
+          <v-flex xs7 pl-2>
+            <v-card>
+              <v-tabs
+                v-model="tab"
+                color="primary"
+              >
+                <v-tab
+                >  
+                  Code
+                </v-tab>
+              <v-tab
+              @click="getUsers"
+                >
+                  
+                  Users
+                </v-tab>
+              </v-tabs>
 
-            </v-flex>
-            <v-flex xs5>
+              <v-tabs-items v-model="tab">
+                <v-tab-item
+                >
+                  <codemirror ref="myCm"
+                    :value="code" 
+                    :options="cmOptions"
+                    @input="onCmCodeChange">
+                  </codemirror>
+                </v-tab-item>
+                      <v-tab-item
+                >
+                  <v-card flat>
+                    <v-card-text>
+                      <v-list>
+                            <v-list-item
+                                v-for="item in users"
+                                :key="item.id"
+                              >
+                                <v-list-item-avatar>
+                                  <v-img src="@/assets/avatar_anonymous.png"></v-img>
+                                </v-list-item-avatar>
+
+                                <v-list-item-content>
+                                  <v-list-item-title>
+                                    {{ item.firstName }} {{ item.middleName }} {{ item.lastName }}
+                                  </v-list-item-title>
+                                  <v-list-item-subtitle>{{ item.username }}</v-list-item-subtitle>
+
+                                </v-list-item-content>
+
+                                <v-list-item-icon>
+                                  <v-icon color="green">fiber_manual_record</v-icon>
+                                </v-list-item-icon>
+                              </v-list-item>
+                            </v-list>
+                    </v-card-text>
+                  </v-card>
+                </v-tab-item>
+              </v-tabs-items>
+            </v-card>
+          </v-flex>
+        <v-flex xs5>
     <v-timeline dense clipped >
       <v-timeline-item
         fill-dot
@@ -162,7 +214,9 @@ export default {
         { text: "Javascript", value: "text/javascript"},
         { text: "PHP", value: "text/x-php"},
         { text: "Python", value: "text/x-python"}
-      ]
+      ],
+      users: [],
+      tab: null
     };
   },
   computed: {
@@ -196,21 +250,34 @@ export default {
         this.input = null
       }
     },
+    updateLanguage() {
+      if (this.stompClient && this.stompClient.connected) {
+        const msg = { sender: this.user.name, content: this.cmOptions.mode,
+            type: 'LANGUAGE', tutorialGroup: this.tutorialGroupDetail };
+        this.stompClient.send("/app/chat.language/"+this.tutorialGroupId, JSON.stringify(msg), {});
+      }
+    },
     connect() {
       this.socket = new SockJS(API_ROOT+"/tutorial");
       this.stompClient = Stomp.over(this.socket);
       this.stompClient.debug = () => {};
       this.stompClient.connect(
-        {},
+        { username: this.user.name},
         () => {
           this.connected = true;
           this.stompClient.subscribe("/group/"+this.tutorialGroupId, tick => {
             this.received_messages.unshift(JSON.parse(tick.body));
           });
 
-          this.stompClient.subscribe("/group/code/"+this.tutorialGroupId, tick => {
+          this.stompClient.subscribe("/group/"+this.tutorialGroupId+"/code", tick => {
             if(!this.isTutor){
               this.code = JSON.parse(tick.body).content;
+            }
+          });
+
+          this.stompClient.subscribe("/group/"+this.tutorialGroupId+"/language", tick => {
+            if(!this.isTutor){
+              this.cmOptions.mode = JSON.parse(tick.body).content;
             }
           });
 
@@ -240,12 +307,22 @@ export default {
     onCmCodeChange(newCode) {
       this.code = newCode
       this.stream()
+    },
+    onLanguageChange(language) {
+      this.cmOptions.mode = language
+      this.updateLanguage()
+    },
+    getUsers(){
+      PostAPI.getCurrentUsers(this.tutorialGroupDetail).then(currentUsers => {
+      this.users = currentUsers;
+    }) 
     }
   },
   mounted() {
     this.connect();
     this.isTutor = AccountService.getProfile().name == "tutor@miu.edu";
     this.cmOptions.readOnly = !this.isTutor;
+    this.getUsers();
   },
   beforeDestroy(){
     this.disconnect();
@@ -257,7 +334,8 @@ export default {
     height: auto !important;
     min-height: 500px !important;
     padding: 6px 12px;
-    border-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
   }
   .CodeMirror-scroll{
     height: auto !important;
