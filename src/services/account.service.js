@@ -1,42 +1,29 @@
-// import { AuthAPI } from "@/api";
+import { AuthAPI } from "@/api";
 import Router from "@/router";
 
 export const ACCESS_TOKEN_KEY = "token";
 export const PROFILE_KEY = "profile";
 
 const AccountService = {
-  login(
-    email, password
-    ) {
-    const res = {token: "djsackajhfisdaf874rhfashouiwgafp9awjlapw3ur",
-    data: {
-      fullName: "Admin",
-      email: email,
-      role: "admin"
-    }}
-    // return AuthAPI.login(email, password)
-    //   .then(res => {
-    //     if (res && res.data) {
-    //       if(res.data.role == 'admin'){
-            localStorage.setItem(ACCESS_TOKEN_KEY, password);
-            localStorage.setItem(
-              PROFILE_KEY,
-              JSON.stringify({
-                name: email,
-                email: email,
-                role: res.data.role
-              })
-            );
-            return Promise.resolve(true);
-      //     }
-      //     else{
-      //       throw "Unauthorized user"
-      //     }
-      //   }
-      // })
-      // .catch(err => {
-      //   throw err;
-      // });
+  login(email, password) {
+    return AuthAPI.login(email, password)
+      .then(res => {
+        if (res && res.jwt) {
+          localStorage.setItem(ACCESS_TOKEN_KEY, res.jwt);
+          localStorage.setItem(
+            PROFILE_KEY,
+            JSON.stringify({
+              name: res.username,
+              email: res.username,
+              roles: res.roles
+            })
+          );
+          return Promise.resolve(true);
+        }
+      })
+      .catch(err => {
+        throw err;
+      });
   },
   async logout() {
     // logout the user on the API
@@ -57,8 +44,8 @@ const AccountService = {
   getAccessToken: () => localStorage.getItem(ACCESS_TOKEN_KEY),
 
   getProfile: () => JSON.parse(localStorage.getItem(PROFILE_KEY)),
-  getRole() {
-    return this.getProfile() && this.getProfile().role;
+  getRoles() {
+    return this.getProfile() && this.getProfile().roles;
   },
   isAuthenticated: () => {
     const token = localStorage.getItem(ACCESS_TOKEN_KEY);
