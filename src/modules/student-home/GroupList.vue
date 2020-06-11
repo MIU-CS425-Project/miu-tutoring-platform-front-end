@@ -1,6 +1,9 @@
 <template>
   <v-item-group>
-      <v-row v-if="!loading">
+    <template v-if="!loading"
+        >
+      <v-row v-if="tutorialGroups.length > 0">
+        
         <v-col
           v-for="tutorialGroup in tutorialGroups"
           :key="tutorialGroup.id"
@@ -28,6 +31,18 @@
           </v-item>
         </v-col>
       </v-row>
+    </template>
+       <template v-else>
+          
+              <v-alert
+      border="bottom"
+      colored-border
+      type="warning"
+      elevation="2"
+    >
+        No tutorial groups found
+    </v-alert>
+        </template>
        <v-sheet
           class="px-3 pt-3 pb-3"
           v-if="loading"
@@ -63,15 +78,15 @@ export default {
   },
   async created() {   
     TutorialGroupAPI.all().then(res => {
-      this.tutorialGroups = res;   
+      this.tutorialGroups = res;  
       this.loading = false; 
     })
     .catch(() => {
-        this.$notify({
-          type: "danger",
-          title: "Error",
-          message: "Couldn't load groups"
-        });
+        // this.$notify({
+        //   type: "danger",
+        //   title: "Error",
+        //   message: "Couldn't load groups"
+        // });
       this.loading = false; 
     });
   }
