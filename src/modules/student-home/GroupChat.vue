@@ -49,18 +49,13 @@
                   
                 </v-tab>
               <v-layout>
+                    <v-tooltip bottom v-if="!isTutor && tab==0">
+      <template v-slot:activator="{ on, attrs }">
+              <i  v-on="on" v-bind="attrs" :class="[currentLanugageClass + ' colored mt-2 ml-1']" style="font-size: 2.5em;"></i>
 
-              <v-chip
-                class="ma-3 mt-2"
-                color="primary"
-                text-color="white"
-                v-if="!isTutor"
-              >
-                <v-avatar left>
-                  <v-icon>code</v-icon>
-                </v-avatar>
-                {{currentLanugage}}
-              </v-chip>
+      </template>
+      <span>Currently selected language</span>
+    </v-tooltip>
                   <v-row v-if="isTutor && tab==0">
               <v-col  class="pt-1 ml-2" >
                 <v-select
@@ -90,7 +85,7 @@
                   <codemirror ref="myCm"
                     :value="code" 
                     :options="cmOptions"
-                    @input="onCmCodeChange">
+                    @input="onCmCodeChange" :style="cssVars">
                   </codemirror>
                 </v-tab-item>
                       <v-tab-item
@@ -173,11 +168,11 @@
       </template>
           <v-row justify="space-between">
             <v-col cols="7" >
-              <span v-if="message.type == 'JOIN'">{{message.sender == user.name ? "You" : message.sender}} joined</span>
-              <span v-if="message.type == 'LEAVE'">{{message.sender == user.name ? "You" : message.sender}} left</span>
+              <span v-if="message.type == 'JOIN'">{{message.sender == user.email ? "You" : message.sender}} joined</span>
+              <span v-if="message.type == 'LEAVE'">{{message.sender == user.email ? "You" : message.sender}} left</span>
               <span v-if="message.type == 'CHAT'">
                 <div>
-        <strong>{{message.sender == user.name ? "You" : message.sender}}</strong>
+        <strong>{{message.sender == user.email ? "You" : message.sender}}</strong>
 
                 </div>
                  {{message.content}}
@@ -251,15 +246,23 @@ export default {
       users: [],
       tab: null,
       currentLanugage: "Javascript",
-      isDark: false 
+      currentLanugageClass: "devicon-javascript-plain",
+      isDark: false,
+      subscriptions:[]
     };
   },
   computed: {
       timeline () {
         return this.received_messages.slice().reverse()
       },
+      cssVars () {
+        return{
+          '--visibility': this.isTutor ? '' :'hidden',
+        }
+      }
     },
   async created() {
+    this.isTutor = AccountService.getProfile().email == "tutor@miu.edu";
     const { tutorialGroupId } = this.$route.params;
     this.tutorialGroupId = tutorialGroupId;
     TutorialGroupAPI.get(tutorialGroupId).then(res => {
@@ -272,22 +275,23 @@ export default {
   methods: {
     stream() {
       if (this.stompClient && this.stompClient.connected && this.code != null && this.isTutor) {
-        const msg = { sender: this.user.name, content: this.code,
+        const msg = { sender: this.user.email, content: this.code,
             type: 'CHAT', tutorialGroup: this.tutorialGroupDetail };
         this.stompClient.send("/app/chat.stream/"+this.tutorialGroupId, JSON.stringify(msg), {});
       }
     },
     send() {
       if (this.stompClient && this.stompClient.connected && this.input != "" && this.input != null) {
-        const msg = { sender: this.user.name, content: this.input,
+        const msg = { sender: this.user.email, content: this.input,
             type: 'CHAT', tutorialGroup: this.tutorialGroupDetail };
         this.stompClient.send("/app/chat.send/"+this.tutorialGroupId, JSON.stringify(msg), {});
         this.input = null
       }
     },
     updateLanguage() {
-      if (this.stompClient && this.stompClient.connected) {
-        const msg = { sender: this.user.name, content: this.cmOptions.mode,
+      
+      if (this.stompClient && this.stompClient.connected && this.isTutor) {
+        const msg = { sender: this.user.email, content: this.cmOptions.mode,
             type: 'LANGUAGE', tutorialGroup: this.tutorialGroupDetail };
         this.stompClient.send("/app/chat.language/"+this.tutorialGroupId, JSON.stringify(msg), {});
       }
@@ -297,10 +301,10 @@ export default {
       this.stompClient = Stomp.over(this.socket);
       this.stompClient.debug = () => {};
       this.stompClient.connect(
-        { username: this.user.name},
+        { username: this.user.email},
         () => {
           this.connected = true;
-          this.stompClient.subscribe("/group/"+this.tutorialGroupId, tick => {
+          var messageSub = this.stompClient.subscribe("/group/"+this.tutorialGroupId, tick => {
             if(JSON.parse(tick.body).type == "JOIN"){              
               this.getUsers()
               this.stream()
@@ -313,21 +317,25 @@ export default {
               this.received_messages.unshift(JSON.parse(tick.body));
             }
           });
+          this.subscriptions.push(messageSub);
 
-          this.stompClient.subscribe("/group/"+this.tutorialGroupId+"/code", tick => {
+          var codeSub = this.stompClient.subscribe("/group/"+this.tutorialGroupId+"/code", tick => {
             if(!this.isTutor){
               this.code = JSON.parse(tick.body).content;
             }
           });
+          this.subscriptions.push(codeSub);
 
-          this.stompClient.subscribe("/group/"+this.tutorialGroupId+"/language", tick => {
+          var lanSub = this.stompClient.subscribe("/group/"+this.tutorialGroupId+"/language", tick => {
             if(!this.isTutor){
               this.cmOptions.mode = JSON.parse(tick.body).content;
               this.currentLanugage = this.languages.filter( lan => lan.value == this.cmOptions.mode)[0].text;
+              this.currentLanugageClass = this.getLanguageClass(this.currentLanugage);
             }
           });
+          this.subscriptions.push(lanSub);
 
-          const msg = { sender: this.user.name, content: "",
+          const msg = { sender: this.user.email, content: "",
             type: 'JOIN', tutorialGroup: this.tutorialGroupDetail };
           this.stompClient.send("/app/chat.register/"+this.tutorialGroupId, JSON.stringify(msg), {});
         },
@@ -339,16 +347,20 @@ export default {
     },
     disconnect() {
       if (this.stompClient) {
-                  const msg = { sender: this.user.name, content: "",
+
+        const msg = { sender: this.user.email, content: "",
             type: 'LEAVE', tutorialGroup: this.tutorialGroupDetail};
         this.stompClient.send("/app/chat.register/"+this.tutorialGroupId, JSON.stringify(msg), {});
+        this.subscriptions.forEach(subscription => {
+          subscription.unsubscribe()
+        });            
+
         this.stompClient.disconnect();
-        this.$router.push({ name: "group-list" });
+        this.socket.close();
+
+        this.$router.push({ name: "group-list" }).catch(() => {});
       }
       this.connected = false;
-    },
-    tickleConnection() {
-      this.connected ? this.disconnect() : this.connect();
     },
     onCmCodeChange(newCode) {
       this.code = newCode
@@ -356,7 +368,7 @@ export default {
     },
     onLanguageChange(language) {
       this.cmOptions.mode = language
-      this.updateLanguage()
+      this.updateLanguage(this.cmOptions.mode)
     },
     onThemeChange(isDark) {
       this.cmOptions.theme = isDark ? "base16-dark" : "base16-light";
@@ -364,16 +376,34 @@ export default {
     getUsers(){
       PostAPI.getCurrentUsers(this.tutorialGroupId).then(currentUsers => {
       this.users = currentUsers;
-    }) 
+      }) 
+    },
+    getLanguageClass(languageClass){
+      switch (languageClass) {
+        case 'Html':
+          return "devicon-html5-plain-wordmark"
+        case 'CSS':
+          return "devicon-css3-plain-wordmark"
+        case 'Java':
+          return "devicon-java-plain-wordmark"
+        case 'PHP':
+          return "devicon-php-plain"
+        case 'Python':
+          return "devicon-python-plain-wordmark"
+        default:
+          return "devicon-javascript-plain"
+      }
     }
   },
   mounted() {
     this.connect();
-    this.isTutor = AccountService.getProfile().name == "tutor@miu.edu";
     this.cmOptions.readOnly = !this.isTutor;
     this.getUsers();
   },
   beforeDestroy(){
+    this.disconnect();
+  },
+  destroyed(){
     this.disconnect();
   }
 };
@@ -389,5 +419,8 @@ export default {
   .CodeMirror-scroll{
     height: auto !important;
     min-height: 500px !important;
+  }
+  .CodeMirror-cursor, div.CodeMirror-cursor{
+    visibility: var(--visibility) !important
   }
 </style>

@@ -45,6 +45,14 @@ Request.interceptors.response.use(
       throw err;
     }
     const { status } = err.response;
+    if (status == 403) {
+      app.$notify({
+        type: "warning",
+        title: "Error",
+        message: "Please log in again"
+      });
+      AccountService.logout();
+    }
     if (status >= 500 && status <= 550) {
       app.$notify({
         type: "danger",

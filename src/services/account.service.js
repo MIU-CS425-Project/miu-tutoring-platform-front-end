@@ -13,7 +13,7 @@ const AccountService = {
           localStorage.setItem(
             PROFILE_KEY,
             JSON.stringify({
-              name: res.username,
+              name: res.name,
               email: res.username,
               roles: res.roles
             })
