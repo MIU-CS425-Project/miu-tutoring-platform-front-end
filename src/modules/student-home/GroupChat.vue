@@ -14,21 +14,7 @@
         <v-toolbar-title>{{tutorialGroupDetail.tutorialGroupNumber}}</v-toolbar-title>
 
         <v-spacer></v-spacer>
-        <v-row>
-        <v-col md="4"
-        offset-md="8">
-          <v-select
-          :items="languages"
-          label="Languages"
-          item-text="text"
-          item-value="value"
-          outlined
-          dense
-          :value="cmOptions.mode"
-          @input="onLanguageChange"
-          class="mr-2 mt-7"
-        ></v-select>
-        </v-col>
+        <v-row v-if="isTutor">
       </v-row>
 
       <v-btn outlined color="error" v-if="connected" @click="disconnect">Leave</v-btn>
@@ -38,22 +24,64 @@
 
       <v-card-text>
         <v-layout row>
-          <v-flex xs7 pl-2>
+          <v-flex xs12 lg8 pl-2>
             <v-card>
               <v-tabs
                 v-model="tab"
                 color="primary"
               >
                 <v-tab
+                class="pt-2"
                 >  
                   Live Code Share
                 </v-tab>
               <v-tab
               @click="getUsers"
+              class="pt-2 pr-5"
                 >
+                  <v-badge
+                    color="green"
+                    :content="users.length"
+                    bordered
+                  >
+                    Participants
+                  </v-badge>
                   
-                  Participants
                 </v-tab>
+              <v-layout>
+
+              <v-chip
+                class="ma-3 mt-2"
+                color="primary"
+                text-color="white"
+                v-if="!isTutor"
+              >
+                <v-avatar left>
+                  <v-icon>code</v-icon>
+                </v-avatar>
+                {{currentLanugage}}
+              </v-chip>
+                  <v-row v-if="isTutor && tab==0">
+              <v-col  class="pt-1 ml-2" >
+                <v-select
+                :items="languages"
+                label="Language"
+                item-text="text"
+                item-value="value"
+                outlined
+                dense
+                :value="cmOptions.mode"
+                @input="onLanguageChange"
+                class="pr-5 pb-2"
+                style="width: 200px"
+              ></v-select>
+              </v-col>
+                  </v-row>
+                  <v-spacer></v-spacer>
+                  
+                  <v-switch v-if="tab==0" class="mr-4 mt-2" :input-value="isDark" @change="onThemeChange" inset label="Dark theme"></v-switch>
+
+                </v-layout>
               </v-tabs>
 
               <v-tabs-items v-model="tab">
@@ -98,7 +126,7 @@
               </v-tabs-items>
             </v-card>
           </v-flex>
-        <v-flex xs5>
+        <v-flex xs12 lg4>
     <v-timeline dense clipped >
       <v-timeline-item
         fill-dot
@@ -137,7 +165,7 @@
           v-for="message in received_messages"
           :key="message.id"
           class="pb-0 mr-4"
-          :color="message.type == 'JOIN' ? 'green' : message.type == 'LEAVE' ? 'red' : 'grey'"
+          :color="message.type == 'JOIN' ? 'green' : message.type == 'LEAVE' ? 'red' : 'primary'"
           small
           right
         >
@@ -182,6 +210,7 @@ import 'codemirror/mode/python/python.js'
 
 // theme css
 import 'codemirror/theme/base16-dark.css'
+import 'codemirror/theme/base16-light.css'
 
 import AccountService from "@/services";
 import { TutorialGroupAPI, PostAPI } from "@/api";
@@ -198,12 +227,12 @@ export default {
       input: null,
       tutorialGroupId: 0,
       tutorialGroupDetail:{},
-      code: 'const a = 10',
+      code: '',
       isTutor: false,
       cmOptions: {
         tabSize: 4,
         mode: 'text/javascript',
-        theme: 'base16-dark',
+        theme: 'base16-light',
         lineNumbers: true,
         line: true,
         readOnly: true,
@@ -216,8 +245,13 @@ export default {
         { text: "PHP", value: "text/x-php"},
         { text: "Python", value: "text/x-python"}
       ],
+      themes: [
+        { text: "Dark", value: "base16-dark"},
+        { text: "Light", value: "base16-light"}], 
       users: [],
-      tab: null
+      tab: null,
+      currentLanugage: "Javascript",
+      isDark: false 
     };
   },
   computed: {
@@ -237,7 +271,7 @@ export default {
   },
   methods: {
     stream() {
-      if (this.stompClient && this.stompClient.connected && this.code != "" && this.code != null && this.isTutor) {
+      if (this.stompClient && this.stompClient.connected && this.code != null && this.isTutor) {
         const msg = { sender: this.user.name, content: this.code,
             type: 'CHAT', tutorialGroup: this.tutorialGroupDetail };
         this.stompClient.send("/app/chat.stream/"+this.tutorialGroupId, JSON.stringify(msg), {});
@@ -267,7 +301,17 @@ export default {
         () => {
           this.connected = true;
           this.stompClient.subscribe("/group/"+this.tutorialGroupId, tick => {
-            this.received_messages.unshift(JSON.parse(tick.body));
+            if(JSON.parse(tick.body).type == "JOIN"){              
+              this.getUsers()
+              this.stream()
+              this.updateLanguage()
+            }
+            else if(JSON.parse(tick.body).type == "LEAVE"){
+              this.getUsers()
+            } 
+            else {
+              this.received_messages.unshift(JSON.parse(tick.body));
+            }
           });
 
           this.stompClient.subscribe("/group/"+this.tutorialGroupId+"/code", tick => {
@@ -279,6 +323,7 @@ export default {
           this.stompClient.subscribe("/group/"+this.tutorialGroupId+"/language", tick => {
             if(!this.isTutor){
               this.cmOptions.mode = JSON.parse(tick.body).content;
+              this.currentLanugage = this.languages.filter( lan => lan.value == this.cmOptions.mode)[0].text;
             }
           });
 
@@ -313,8 +358,11 @@ export default {
       this.cmOptions.mode = language
       this.updateLanguage()
     },
+    onThemeChange(isDark) {
+      this.cmOptions.theme = isDark ? "base16-dark" : "base16-light";
+    },
     getUsers(){
-      PostAPI.getCurrentUsers(this.tutorialGroupDetail).then(currentUsers => {
+      PostAPI.getCurrentUsers(this.tutorialGroupId).then(currentUsers => {
       this.users = currentUsers;
     }) 
     }
