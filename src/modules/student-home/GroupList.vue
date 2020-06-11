@@ -5,7 +5,9 @@
           v-for="tutorialGroup in tutorialGroups"
           :key="tutorialGroup.id"
           cols="12"
-          md="3"
+          lg="3"
+          md="4"
+          xs="6"
         >
           <v-item>
             <v-card
@@ -33,7 +35,9 @@
         <v-row>
           <v-col
               cols="12"
-              md="3"
+              lg="3"
+              md="4"
+              xs="6"
               height="30px"
           >
           <v-skeleton-loader
@@ -62,6 +66,14 @@ export default {
       this.tutorialGroups = res;   
       this.loading = false; 
     })
+    .catch(() => {
+        this.$notify({
+          type: "danger",
+          title: "Error",
+          message: "Couldn't load groups"
+        });
+      this.loading = false; 
+    });
   }
 }
 </script>
