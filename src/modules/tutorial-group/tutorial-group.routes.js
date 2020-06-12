@@ -20,7 +20,7 @@ export default [
     }
   },
   {
-    path: "tutorialgroups/:tutorialgroupId/update",
+    path: "tutorialgroups/:tutorialGroupId/update",
     name: "tutorialgroup-update",
     component: TutorialGroupUpdate,
     meta: {

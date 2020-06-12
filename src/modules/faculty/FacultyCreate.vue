@@ -16,7 +16,7 @@
                 slot="activator"
                 icon
                 v-on="on"
-                @click="$router.push({ name: 'tutorialgroup-list' })">
+                @click="$router.push({ name: 'faculty-list' })">
                 <v-icon>arrow_back</v-icon>
               </v-btn>
             </template>
@@ -25,7 +25,7 @@
           <v-toolbar-title
             class="blue-grey--text text--darken-2 font-weight-bold"
           >
-            Add Tutorial Group
+            Add Faculty
           </v-toolbar-title>
           <v-spacer/>
           <v-btn
@@ -42,36 +42,67 @@
         >
           <!-- row 1 -->
           <v-layout row>
-            <v-flex xs6>
+            <v-flex xs4>
               <v-text-field
                 :rules="requiredRules"
-                v-model="item.tutorialGroupNumber"
-                label="Group Number"
-                name="tutorialGroupNumber"
+                v-model="item.firstName"
+                label="First Name"
+                name="firstName"
                 filled
                 autofocus
               />
             </v-flex>
             <v-flex 
-              xs6 
+              xs4 
               pl-3>
-              <v-select
+              <v-text-field
+                v-model="item.middleName"
+                label="Middle Name"
+                name="middleName"
+                filled                
+              />
+            </v-flex>
+            <v-flex 
+              xs4 
+              pl-3>
+              <v-text-field
                 :rules="requiredRules"
-                :items="sections"
-                label="Section"
-                item-text="sectionName"
-                v-model="item.section"
-                filled
-                return-object
-              ></v-select>
+                v-model="item.lastName"
+                label="Last Name"
+                name="lastName"
+                filled                
+              />
             </v-flex>
           </v-layout>
-            <v-layout row>
-            <v-flex xs6>
-              <v-textarea
-                v-model="description"
-                label="Description"
-                name="description"
+          <v-layout row>
+            <v-flex
+              xs4
+            >
+              <v-text-field
+                v-model="item.department"
+                label="Department"
+                name="department"
+                filled                
+              />
+            </v-flex>
+            <v-flex 
+              pl-3 xs4>
+              <v-text-field
+                :rules="emailRules"
+                v-model="item.username"
+                label="Email"
+                name="username"
+                filled
+              />
+            </v-flex>
+            <v-flex 
+              xs4
+              pl-3>
+              <v-text-field
+                :rules="passwordRules"
+                v-model="item.password"
+                label="Password"
+                name="password"
                 filled                
               />
             </v-flex>
@@ -83,14 +114,15 @@
 </template>
 
 <script>
-import { TutorialGroupAPI, SectionAPI } from "@/api";
+import { FacultyAPI } from "@/api";
 
 export default {
-  name: "TutorialGroupCreate",
+  name: "FacultyCreate",
   data() {
     return {
       valid: true,
-      description: "",
+      enrollmentDate: null,
+      enrollmentModal: false,
       item: {},
       requiredRules: [v => !!v || "This field is required"],
       emailRules: [
@@ -100,30 +132,32 @@ export default {
       passwordRules: [
         v => !!v || 'Password is required',
         v => v.length >= 3 || 'Password must be greater than three characters'
-      ],
-      sections: []
+      ]
     };
-  },
-  created() {
-    SectionAPI.all().then(res => {
-      this.sections = res.content;
-    });
   },
   methods: {
     save() {
       this.$refs.form.validate();
       if(this.valid){
         this.item.enrollmentDate = this.enrollmentDate;
-          TutorialGroupAPI.create(this.item)
+          FacultyAPI.create(this.item)
             .then(
-              () => {
+              res => {
+              if(!res){
+                this.$notify({
+                    type: "danger",
+                    title: "Error",
+                    message: "There is a user with the given email"
+                });
+              } else{
                 this.$notify({
                   type: "success",
                   title: "Success",
-                  message: "TutorialGroup created successfully"
+                  message: "Faculty created successfully"
                 });
                 this.item = {};
-                this.$router.push({ name: "tutorialgroup-list" });
+                this.$router.push({ name: "faculty-list" });
+              }
             })
         }
     }

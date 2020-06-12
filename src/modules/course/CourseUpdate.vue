@@ -16,7 +16,7 @@
                 slot="activator"
                 icon
                 v-on="on"
-                @click="$router.push({ name: 'tutorialgroup-list' })">
+                @click="$router.push({ name: 'course-list' })">
                 <v-icon>arrow_back</v-icon>
               </v-btn>
             </template>
@@ -25,7 +25,7 @@
           <v-toolbar-title
             class="blue-grey--text text--darken-2 font-weight-bold"
           >
-            Update Tutorial Group
+            Update Course
           </v-toolbar-title>
           <v-spacer/>
           <v-btn
@@ -42,36 +42,36 @@
         >
           <!-- row 1 -->
           <v-layout row>
-            <v-flex xs6>
+            <v-flex xs4>
               <v-text-field
                 :rules="requiredRules"
-                v-model="item.tutorialGroupNumber"
-                label="Group Number"
-                name="tutorialGroupNumber"
-                filled
-                autofocus
+                v-model="item.courseNumber"
+                label="Course Number"
+                name="courseNumber"
+                filled                
               />
             </v-flex>
-            <v-flex 
-              xs6 
-              pl-3>
-              <v-select
+            <v-flex
+              xs4
+              pl-3
+            >
+              <v-text-field
                 :rules="requiredRules"
-                :items="sections"
-                label="Section"
-                item-text="sectionName"
-                v-model="item.section"
-                filled
-                return-object
-              ></v-select>
+                v-model="item.courseName"
+                label="Name"
+                name="courseNumber"
+                filled                
+              />
             </v-flex>
-          </v-layout>
-            <v-layout row>
-            <v-flex xs6>
-              <v-textarea
-                v-model="description"
-                label="Description"
-                name="description"
+            <v-flex
+              xs4
+              pl-3
+            >
+              <v-text-field
+                v-model="item.courseCredit"
+                label="Credit"
+                name="courseCredit"
+                type="number"
                 filled                
               />
             </v-flex>
@@ -83,27 +83,23 @@
 </template>
 
 <script>
-import { TutorialGroupAPI, SectionAPI } from "@/api";
+import { CourseAPI } from "@/api";
 
 export default {
-  name: "TutorialGroupUpdate",
+  name: "CourseUpdate",
   data() {
     return {
       valid: true,
       enrollmentDate: null,
       enrollmentModal: false,
-      item: {},
-      sections: []
+      item: {}
     };
   },
   created() {
-    const { tutorialGroupId } = this.$route.params;
-    TutorialGroupAPI.get(tutorialGroupId).then(res => {
+    const { courseId } = this.$route.params;
+    CourseAPI.get(courseId).then(res => {
       this.item = res;
       this.enrollmentDate = this.item.enrollmentDate;
-    });
-    SectionAPI.all().then(res => {
-      this.sections = res.content;
     });
   },
   methods: {
@@ -111,16 +107,16 @@ export default {
       this.$refs.form.validate();
       if (this.valid) {
         this.item.enrollmentDate = this.enrollmentDate;
-        TutorialGroupAPI.update(this.item)
+        CourseAPI.update(this.item)
           .then(() => {
             this.item.id = this.$route.params;
             this.item = {};
             this.$notify({
               type: "success",
               title: "Success",
-              message: "TutorialGroup updated successfully"
+              message: "Course updated successfully"
             });
-            this.$router.push({ name: "tutorialgroup-list" });
+            this.$router.push({ name: "course-list" });
           })
           .catch(err => {
             if (err.statusCode === 422) {

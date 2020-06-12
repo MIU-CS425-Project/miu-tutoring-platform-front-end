@@ -6,6 +6,10 @@ import accountRoutes from "@/modules/account/account.routes";
 import studentRoutes from "@/modules/student/student.routes";
 import studentHomeRoutes from "@/modules/student-home/student-home.routes";
 import tutorialGroupRoutes from "@/modules/tutorial-group/tutorial-group.routes"
+import sectionRoutes from "@/modules/section/section.routes";
+import courseRoutes from "@/modules/course/course.routes";
+import facultyRoutes from "@/modules/faculty/faculty.routes";
+import tutorRequestRoutes from "@/modules/tutor-request/tutor-request.routes";
 
 const routes = [
   {
@@ -19,7 +23,11 @@ const routes = [
       ...accountRoutes,
       ...studentRoutes,
       ...studentHomeRoutes,
-      ...tutorialGroupRoutes
+      ...tutorialGroupRoutes,
+      ...sectionRoutes,
+      ...courseRoutes,
+      ...facultyRoutes,
+      ...tutorRequestRoutes
     ]
   },
   {

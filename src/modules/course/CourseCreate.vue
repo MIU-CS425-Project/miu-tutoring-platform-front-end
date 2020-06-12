@@ -16,7 +16,7 @@
                 slot="activator"
                 icon
                 v-on="on"
-                @click="$router.push({ name: 'tutorialgroup-list' })">
+                @click="$router.push({ name: 'course-list' })">
                 <v-icon>arrow_back</v-icon>
               </v-btn>
             </template>
@@ -25,7 +25,7 @@
           <v-toolbar-title
             class="blue-grey--text text--darken-2 font-weight-bold"
           >
-            Add Tutorial Group
+            Add Course
           </v-toolbar-title>
           <v-spacer/>
           <v-btn
@@ -42,36 +42,36 @@
         >
           <!-- row 1 -->
           <v-layout row>
-            <v-flex xs6>
+            <v-flex xs4>
               <v-text-field
                 :rules="requiredRules"
-                v-model="item.tutorialGroupNumber"
-                label="Group Number"
-                name="tutorialGroupNumber"
-                filled
-                autofocus
+                v-model="item.courseNumber"
+                label="Course Number"
+                name="courseNumber"
+                filled                
               />
             </v-flex>
-            <v-flex 
-              xs6 
-              pl-3>
-              <v-select
+            <v-flex
+              xs4
+              pl-3
+            >
+              <v-text-field
                 :rules="requiredRules"
-                :items="sections"
-                label="Section"
-                item-text="sectionName"
-                v-model="item.section"
-                filled
-                return-object
-              ></v-select>
+                v-model="item.courseName"
+                label="Name"
+                name="courseNumber"
+                filled                
+              />
             </v-flex>
-          </v-layout>
-            <v-layout row>
-            <v-flex xs6>
-              <v-textarea
-                v-model="description"
-                label="Description"
-                name="description"
+            <v-flex
+              xs4
+              pl-3
+            >
+              <v-text-field
+                v-model="item.courseCredit"
+                label="Credit"
+                name="courseCredit"
+                type="number"
                 filled                
               />
             </v-flex>
@@ -83,47 +83,39 @@
 </template>
 
 <script>
-import { TutorialGroupAPI, SectionAPI } from "@/api";
+import { CourseAPI } from "@/api";
 
 export default {
-  name: "TutorialGroupCreate",
+  name: "CourseCreate",
   data() {
     return {
       valid: true,
-      description: "",
       item: {},
-      requiredRules: [v => !!v || "This field is required"],
-      emailRules: [
-        v => !!v || 'Email is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
-      ],
-      passwordRules: [
-        v => !!v || 'Password is required',
-        v => v.length >= 3 || 'Password must be greater than three characters'
-      ],
-      sections: []
+      requiredRules: [v => !!v || "This field is required"]
     };
-  },
-  created() {
-    SectionAPI.all().then(res => {
-      this.sections = res.content;
-    });
   },
   methods: {
     save() {
       this.$refs.form.validate();
       if(this.valid){
-        this.item.enrollmentDate = this.enrollmentDate;
-          TutorialGroupAPI.create(this.item)
+          CourseAPI.create(this.item)
             .then(
-              () => {
+              res => {
+              if(!res){
+                this.$notify({
+                    type: "danger",
+                    title: "Error",
+                    message: "There is a user with the given email"
+                });
+              } else{
                 this.$notify({
                   type: "success",
                   title: "Success",
-                  message: "TutorialGroup created successfully"
+                  message: "Course created successfully"
                 });
                 this.item = {};
-                this.$router.push({ name: "tutorialgroup-list" });
+                this.$router.push({ name: "course-list" });
+              }
             })
         }
     }

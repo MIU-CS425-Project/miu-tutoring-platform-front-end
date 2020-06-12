@@ -6,12 +6,16 @@
         primary-title
         class="primary--text text--darken-3">
         <div>
-          <div class="headline">{{ item.tutorialGroupNumber }} </div>
-          <span>{{ item.section ? item.section.sectionName : '' }}</span>
+          <div class="headline">{{ item.sectionName }}</div>
+          <span>                {{ item.course.courseNumber }} - {{ item.course.courseName }}
+</span>
         </div>
       </v-card-title>
       <v-divider light/>
       <v-card-text>
+        Class Room: {{ item.classRoom }}
+        <br />
+        Month: {{ item.month }}
       </v-card-text>
       <v-card-actions class="pa-3">
         <v-spacer />
@@ -30,7 +34,7 @@
 
 <script>
 export default {
-  name: "TutorialGroupDetail",
+  name: "SectionDetail",
   props: {
     modalName: {
       type: String,
@@ -48,8 +52,8 @@ export default {
     edit() {
       this.$modal.hide(this.modalName);
       this.$router.push({
-        name: "tutorialgroup-update",
-        params: { tutorialGroupId: this.item.tutorialGroupId }
+        name: "section-update",
+        params: { sectionId: this.item.sectionId }
       });
     }
   }
