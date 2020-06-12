@@ -79,7 +79,7 @@
                         type="submit" 
                         block 
                         color="primary"
-                        :disabled="!valid"
+                        :disabled="!valid || loading"
                         >
                         Login
                       </v-btn>
@@ -119,7 +119,8 @@ export default {
       passwordRules: [
         v => !!v || 'Password is required',
         v => v.length >= 3 || 'Password must be greater than three characters'
-      ]
+      ],
+      loading: false
     };
   },
   methods: {
