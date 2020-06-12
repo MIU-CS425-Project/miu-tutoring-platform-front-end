@@ -5,6 +5,10 @@ import RoleAPI from "./role.api";
 import StudentAPI from "./student.api";
 import TutorialGroupAPI from "./tutorial-group.api";
 import PostAPI from "./post.api"
+import SectionAPI from "./section.api"
+import CourseAPI from "./course.api"
+import FacultyAPI from "./faculty.api"
+import TutorRequestAPI from "./tutor-request.api"
 
 const API_ROOT = process.env.VUE_APP_API_ROOT+"/api/v1";
 export {
@@ -15,5 +19,9 @@ export {
   RoleAPI,
   StudentAPI,
   TutorialGroupAPI,
-  PostAPI
+  PostAPI,
+  SectionAPI,
+  CourseAPI,
+  FacultyAPI,
+  TutorRequestAPI
 };
