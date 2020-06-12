@@ -6,7 +6,7 @@
       <v-layout >
         <v-flex xs12>
           <div class="headline font-weight-thin">
-            TutorialGroups
+            Tutorial Groups
           </div>
         </v-flex>
       </v-layout>
@@ -51,6 +51,9 @@
               no-data-text="No data found"
               @click:row="tutorialgroupDetail"
             >
+              <template v-slot:item.section="{ item }">
+                {{ item.section ? item.section.sectionName : '' }}
+              </template>
               <template v-slot:item.actions="{ item }">
                 <div @click.stop>
                     <v-menu
@@ -66,7 +69,7 @@
                         <v-list-item
                           ripple
                           @click="$router.push({name:'tutorialgroup-update',
-                                                params:{tutorialgroupId:item.tutorialgroupId}})">
+                                                params:{tutorialGroupId:item.tutorialGroupId}})">
                           <v-list-item-action>
                             <v-icon>edit</v-icon>
                           </v-list-item-action>
@@ -99,7 +102,7 @@
 
                         <v-btn
                           color="primary"
-                          @click="deleteTutorialGroup(item.tutorialgroupId)"
+                          @click="deleteTutorialGroup(item.tutorialGroupId)"
                         >
                           Yes
                         </v-btn>

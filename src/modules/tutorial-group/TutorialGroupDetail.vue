@@ -6,13 +6,12 @@
         primary-title
         class="primary--text text--darken-3">
         <div>
-          <div class="headline">{{ item.firstName }} {{ item.middleName }} {{ item.lastName }}</div>
-          <span>{{ item.tutorialgroupNumber }}</span>
+          <div class="headline">{{ item.tutorialGroupNumber }} </div>
+          <span>{{ item.section ? item.section.sectionName : '' }}</span>
         </div>
       </v-card-title>
       <v-divider light/>
       <v-card-text>
-        CGPA: {{ item.cgpa }}
       </v-card-text>
       <v-card-actions class="pa-3">
         <v-spacer />
@@ -50,7 +49,7 @@ export default {
       this.$modal.hide(this.modalName);
       this.$router.push({
         name: "tutorialgroup-update",
-        params: { tutorialgroupId: this.item.tutorialgroupId }
+        params: { tutorialGroupId: this.item.tutorialGroupId }
       });
     }
   }

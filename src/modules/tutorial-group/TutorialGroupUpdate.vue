@@ -11,17 +11,15 @@
           class="grey lighten-4 elevation-2 mb-1"
         >
           <v-tooltip bottom>
-
-          <template v-slot:activator="{ on }">
-
-            <v-btn
-              slot="activator"
-              icon
-              v-on="on"
-              @click="$router.push({ name: 'tutorialgroup-list' })">
-              <v-icon>arrow_back</v-icon>
-            </v-btn>
-          </template>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                slot="activator"
+                icon
+                v-on="on"
+                @click="$router.push({ name: 'tutorialgroup-list' })">
+                <v-icon>arrow_back</v-icon>
+              </v-btn>
+            </template>
             <span>Cancel</span>
           </v-tooltip>
           <v-toolbar-title
@@ -44,84 +42,38 @@
         >
           <!-- row 1 -->
           <v-layout row>
-            <v-flex xs4>
+            <v-flex xs6>
               <v-text-field
                 :rules="requiredRules"
-                v-model="item.firstName"
-                label="First Name"
-                name="firstName"
+                v-model="item.tutorialGroupNumber"
+                label="Group Number"
+                name="tutorialGroupNumber"
                 filled
                 autofocus
               />
             </v-flex>
             <v-flex 
-              xs4 
+              xs6 
               pl-3>
-              <v-text-field
-                v-model="item.middleName"
-                label="Middle Name"
-                name="middleName"
-                filled                
-              />
-            </v-flex>
-            <v-flex 
-              xs4 
-              pl-3>
-              <v-text-field
+              <v-select
                 :rules="requiredRules"
-                v-model="item.lastName"
-                label="Last Name"
-                name="lastName"
-                filled                
-              />
+                :items="sections"
+                label="Section"
+                item-text="sectionName"
+                v-model="item.section"
+                filled
+                return-object
+              ></v-select>
             </v-flex>
           </v-layout>
-          <v-layout row>
-            <v-flex xs4>
-              <v-text-field
-                :rules="requiredRules"
-                v-model="item.tutorialgroupNumber"
-                label="TutorialGroup Number"
-                name="tutorialgroupNumber"
+            <v-layout row>
+            <v-flex xs6>
+              <v-textarea
+                v-model="description"
+                label="Description"
+                name="description"
                 filled                
               />
-            </v-flex>
-            <v-flex
-              xs4
-              pl-3
-            >
-              <v-text-field
-                v-model="item.cgpa"
-                label="CGPA"
-                name="cgpa"
-                type="number"
-                filled                
-              />
-            </v-flex>
-             <v-flex pl-3 xs4>
-              <v-dialog
-                ref="enrollmentDialog"
-                v-model="enrollmentModal"
-                :enrollment-value.sync="enrollmentDate"
-                persistent
-                width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                   :rules="requiredRules"
-                    v-model="enrollmentDate"
-                    label="Enrollment"
-                    readonly
-                    v-on="on"
-                    filled
-                  ></v-text-field>
-                </template>
-                <v-date-picker v-model="enrollmentDate" scrollable>
-                  <v-spacer></v-spacer>
-                  <v-btn text color="primary" @click="enrollmentModal = false">Cancel</v-btn>
-                  <v-btn text color="primary" @click="$refs.enrollmentDialog.save(enrollmentDate)">OK</v-btn>
-                </v-date-picker>
-              </v-dialog>
             </v-flex>
           </v-layout>
         </v-card>
@@ -131,7 +83,7 @@
 </template>
 
 <script>
-import { TutorialGroupAPI } from "@/api";
+import { TutorialGroupAPI, SectionAPI } from "@/api";
 
 export default {
   name: "TutorialGroupUpdate",
@@ -140,14 +92,18 @@ export default {
       valid: true,
       enrollmentDate: null,
       enrollmentModal: false,
-      item: {}
+      item: {},
+      sections: []
     };
   },
   created() {
-    const { tutorialgroupId } = this.$route.params;
-    TutorialGroupAPI.get(tutorialgroupId).then(res => {
+    const { tutorialGroupId } = this.$route.params;
+    TutorialGroupAPI.get(tutorialGroupId).then(res => {
       this.item = res;
       this.enrollmentDate = this.item.enrollmentDate;
+    });
+    SectionAPI.all().then(res => {
+      this.sections = res.content;
     });
   },
   methods: {

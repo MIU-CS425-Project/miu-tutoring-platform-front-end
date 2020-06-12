@@ -45,12 +45,25 @@
             <v-flex xs6>
               <v-text-field
                 :rules="requiredRules"
-                v-model="item.totorialGroupNumber"
+                v-model="item.tutorialGroupNumber"
                 label="Group Number"
-                name="totorialGroupNumber"
+                name="tutorialGroupNumber"
                 filled
                 autofocus
               />
+            </v-flex>
+            <v-flex 
+              xs6 
+              pl-3>
+              <v-select
+                :rules="requiredRules"
+                :items="sections"
+                label="Section"
+                item-text="sectionName"
+                v-model="item.section"
+                filled
+                return-object
+              ></v-select>
             </v-flex>
           </v-layout>
             <v-layout row>
@@ -70,7 +83,7 @@
 </template>
 
 <script>
-import { TutorialGroupAPI } from "@/api";
+import { TutorialGroupAPI, SectionAPI } from "@/api";
 
 export default {
   name: "TutorialGroupCreate",
@@ -87,8 +100,14 @@ export default {
       passwordRules: [
         v => !!v || 'Password is required',
         v => v.length >= 3 || 'Password must be greater than three characters'
-      ]
+      ],
+      sections: []
     };
+  },
+  created() {
+    SectionAPI.all().then(res => {
+      this.sections = res.content;
+    });
   },
   methods: {
     save() {
