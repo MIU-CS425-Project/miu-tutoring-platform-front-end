@@ -56,13 +56,19 @@ export default {
       user: AccountService.getProfile(),
       menus: [
         {
-          title: "Your Groups",
+          title: "Tutor Groups",
           icon: "people",
           route: "group-list",
           allowedUserRoles: ["ROLE_STUDENT"]
         },
         {
-          title: "Applications",
+          title: "Requests",
+          icon: "people",
+          route: "group-list",
+          allowedUserRoles: ["ROLE_STUDENT"]
+        },
+        {
+          title: "Courses",
           icon: "people",
           route: "group-list",
           allowedUserRoles: ["ROLE_STUDENT"]
@@ -76,13 +82,19 @@ export default {
         {
           title: "Faculty",
           icon: "people",
-          route: "student-list",
+          route: "faculty-list",
           allowedUserRoles: ["ROLE_ADMIN"]
         }, 
         {
           title: "Courses",
           icon: "people",
-          route: "student-list",
+          route: "course-list",
+          allowedUserRoles: ["ROLE_ADMIN"]
+        },
+        {
+          title: "Sections",
+          icon: "people",
+          route: "section-list",
           allowedUserRoles: ["ROLE_ADMIN"]
         },
         {
@@ -94,7 +106,7 @@ export default {
         {
           title: "Tutor Requests",
           icon: "people",
-          route: "tutorialgroup-list",
+          route: "tutorrequest-list",
           allowedUserRoles: ["ROLE_FACULTY"]
         },    
       ]
