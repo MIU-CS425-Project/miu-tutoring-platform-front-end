@@ -11,7 +11,11 @@
       style="margin-top: -64px; margin-left: 20px; margin-right: 20px"
     >
       <v-toolbar flat>
-        <v-toolbar-title>{{tutorialGroupDetail.tutorialGroupNumber}}</v-toolbar-title>
+        <v-toolbar-title>
+                        <span class="font-weight-medium">{{tutorialGroupDetail.tutorialGroupNumber}}</span> - {{ tutorialGroupDetail.section ? tutorialGroupDetail.section.course 
+              ? (tutorialGroupDetail.section.course.courseNumber + ' - '+ tutorialGroupDetail.section.course.courseName) : '' : '' }}
+              
+        </v-toolbar-title>
 
         <v-spacer></v-spacer>
         <v-row v-if="isTutor">
