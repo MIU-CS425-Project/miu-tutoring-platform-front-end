@@ -69,7 +69,7 @@
                         <v-list-item
                           ripple
                           @click="$router.push({name:'student-update',
-                                                params:{studentId:item.studentId}})">
+                                                params:{studentId:item.id}})">
                           <v-list-item-action>
                             <v-icon>edit</v-icon>
                           </v-list-item-action>
@@ -102,7 +102,7 @@
 
                         <v-btn
                           color="primary"
-                          @click="deleteStudent(item.studentId)"
+                          @click="deleteStudent(item.id)"
                         >
                           Yes
                         </v-btn>

@@ -136,7 +136,7 @@
               xs6 
               pl-3>
               <v-text-field
-                :rules="usernameRules"
+                :rules="passwordRules"
                 v-model="item.password"
                 label="Password"
                 name="password"

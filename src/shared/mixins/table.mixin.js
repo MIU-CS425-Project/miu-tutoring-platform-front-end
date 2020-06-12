@@ -43,7 +43,7 @@ const tableMixin = {
       this.loading = true;
 
       const { page, itemsPerPage, sortBy, sortDesc } = this.options
-      const sortColumn = sortBy.length != 0 ? sortBy[0]: this.headers[0].value;
+      const sortColumn = sortBy.length != 0 ? sortBy[0]: "";
       const sortDirection = sortDesc.length != 0 ? sortDesc[0]: false;
       
       this.resource.all(page-1, itemsPerPage, sortColumn, sortDirection).then(
