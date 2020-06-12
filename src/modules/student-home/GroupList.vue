@@ -17,32 +17,41 @@
                         dark
               color="#385F73"
             >
-         <v-card-title class="headline">{{tutorialGroup.tutorialGroupNumber}}</v-card-title>
+            <div class="overline pt-2 pl-4">{{ tutorialGroup.section ? $moment(tutorialGroup.section.month).format("MMMM YYYY") +' Block' : '' }}</div>
+         <v-card-title class="headline pt-1">{{tutorialGroup.tutorialGroupNumber}}</v-card-title>
 
-            <v-card-subtitle>{{tutorialGroup.tutorialGroupNumber}} - Introduction to Algorithms</v-card-subtitle>
+            <v-card-subtitle class="pb-0">
+              <div class="font-weight-medium	">{{ tutorialGroup.section ? tutorialGroup.section.course 
+              ? (tutorialGroup.section.course.courseNumber + ' - '+ tutorialGroup.section.course.courseName) : '' : '' }}
+              
+              </div>
+              <div class="font-weight-light">
+              {{ tutorialGroup.section ? 'Section - ' + tutorialGroup.section.sectionName: '' }}
+              </div>
+              </v-card-subtitle>
 
-            <v-card-actions>
+            <v-card-actions class="pt-1">
                          <router-link :to="{ name: 'group-chat',
                               params: { tutorialGroupId: tutorialGroup.tutorialGroupId } }">
-                     <v-btn text>Join</v-btn>   
+                     <v-btn outlined text>Join</v-btn>   
                     </router-link>
             </v-card-actions>
             </v-card>
           </v-item>
         </v-col>
       </v-row>
-    </template>
-       <template v-else>
-          
-              <v-alert
+       <v-alert
       border="bottom"
       colored-border
       type="warning"
       elevation="2"
+      v-else
     >
         No tutorial groups found
     </v-alert>
-        </template>
+    </template>
+       <template v-else>
+   
        <v-sheet
           class="px-3 pt-3 pb-3"
           v-if="loading"
@@ -63,6 +72,7 @@
             </v-col>
           </v-row>
         </v-sheet>
+             </template>
   </v-item-group>
 </template>
 <script>
@@ -78,7 +88,7 @@ export default {
   },
   async created() {   
     TutorialGroupAPI.all().then(res => {
-      this.tutorialGroups = res;  
+      this.tutorialGroups = res.content;  
       this.loading = false; 
     })
     .catch(() => {
