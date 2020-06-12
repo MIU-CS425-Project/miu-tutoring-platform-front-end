@@ -7,14 +7,16 @@ const TutorialGroupAPI = {
     get(id) {
       return Request.get(`${API_ROOT}${PATH}/get/${id}`);
     },
-    all() {
-      return Request.get(`${API_ROOT}${PATH}/list`);
+    all(page, itemsPerPage, sortBy, sortDesc) {
+      return Request.get(`${API_ROOT}${PATH}/list`, {
+        params: {page, itemsPerPage, sortBy, sortDesc}
+      });
     },
     create(data) {
       return Request.post(`${API_ROOT}${PATH}/register/`, data);
     },
     update(data) {
-      return Request.put(`${API_ROOT}${PATH}/edit`, data);
+      return Request.put(`${API_ROOT}${PATH}/edit/${data.tutorialGroupId}`, data);
     },
     remove(id) {
       return Request.delete(`${API_ROOT}${PATH}/delete/${id}`);
