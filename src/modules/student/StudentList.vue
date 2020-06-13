@@ -28,7 +28,7 @@
                 class="pa-0 pl-2 pr-3"
                 @click="$router.push({ name: 'student-create' })"
               >
-                <v-icon class="mr-1">add_circle_outline</v-icon>
+                <v-icon class="mr-1">mdi-plus-circle-outline</v-icon>
                 New Student
               </v-btn>
               <v-spacer/>
@@ -51,7 +51,7 @@
               no-data-text="No data found"
               @click:row="studentDetail"
             >
-              <template v-slot:item.name="{ item }">
+              <template v-slot:item.firstName="{ item }">
                 {{ item.firstName }} {{ item.middleName }} {{ item.lastName }}
               </template>
               <template v-slot:item.actions="{ item }">
@@ -61,25 +61,33 @@
                       left
                       bottom>
                        <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">more_vert</v-icon>
+                        <v-icon v-on="on">mdi-dots-vertical</v-icon>
                       </template>
 
                       <v-list dense >
 
                         <v-list-item
                           ripple
-                          @click="$router.push({name:'student-update',
-                                                params:{studentId:item.id}})">
+                          @click="assignCourse(item)">
                           <v-list-item-action>
-                            <v-icon>edit</v-icon>
+                            <v-icon>mdi-notebook-multiple</v-icon>
+                          </v-list-item-action>
+                          <v-list-item-title>Assign Course</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item
+                          ripple
+                          @click="$router.push({name:'student-update',
+                                                params:{id:item.id}})">
+                          <v-list-item-action>
+                            <v-icon>mdi-pencil</v-icon>
                           </v-list-item-action>
                           <v-list-item-title>Edit</v-list-item-title>
                         </v-list-item>
                         <v-list-item
                           ripple
-                          @click="dialog = true">
+                          @click="selectedItem = item, dialog = true">
                           <v-list-item-action>
-                            <v-icon>delete</v-icon>
+                            <v-icon>mdi-delete</v-icon>
                           </v-list-item-action>
                           <v-list-item-title>Delete</v-list-item-title>
                         </v-list-item>
@@ -102,7 +110,7 @@
 
                         <v-btn
                           color="primary"
-                          @click="deleteStudent(item.id)"
+                          @click="deleteStudent()"
                         >
                           Yes
                         </v-btn>
@@ -129,6 +137,7 @@
 import { StudentAPI } from "@/api";
 import { tableMixin } from "@/shared/mixins";
 import StudentDetail from "./StudentDetail.vue";
+import AssignCourse from "./AssignCourse.vue";
 
 export default {
   name: "StudentList",
@@ -161,7 +170,8 @@ export default {
           sortable: false
         }
       ],
-      dialog: false
+      dialog: false,
+      selectedItem: {}
     };
   },
   methods: {
@@ -180,8 +190,23 @@ export default {
         }
       );
     },
-    async deleteStudent(id) {
-        await StudentAPI.remove(id);
+    assignCourse(student) {
+      this.$modal.show(
+        AssignCourse,
+        {
+          modalName: "student-detail-modal",
+          student
+        },
+        {
+          name: "student-detail-modal",
+          height: "auto",
+          scrollable: true,
+          width: 800
+        }
+      );
+    },
+    async deleteStudent() {
+        await StudentAPI.remove(this.selectedItem.id);
         this.$notify({
           type: "success",
           title: "Success",
