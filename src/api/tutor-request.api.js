@@ -1,9 +1,9 @@
 import { API_ROOT } from ".";
 import Request from "./request";
 
-const PATH = "/tutorialgroup";
+const PATH = "/tutorialrequest";
 
-const TutorialGroupAPI = {
+const TutorRequestAPI = {
     get(id) {
       return Request.get(`${API_ROOT}${PATH}/get/${id}`);
     },
@@ -16,7 +16,7 @@ const TutorialGroupAPI = {
       return Request.post(`${API_ROOT}${PATH}/register/`, data);
     },
     update(data) {
-      return Request.put(`${API_ROOT}${PATH}/edit/${data.tutorialGroupId}`, data);
+      return Request.put(`${API_ROOT}${PATH}/edit/${data.TutorRequestId}`, data);
     },
     remove(id) {
       return Request.delete(`${API_ROOT}${PATH}/delete/${id}`);
@@ -26,4 +26,4 @@ const TutorialGroupAPI = {
     }
   };
 
-  export default TutorialGroupAPI;
+  export default TutorRequestAPI;

@@ -6,7 +6,7 @@
       <v-layout >
         <v-flex xs12>
           <div class="headline font-weight-thin">
-            Students
+            Courses
           </div>
         </v-flex>
       </v-layout>
@@ -26,10 +26,10 @@
               <v-btn
                 color="primary"
                 class="pa-0 pl-2 pr-3"
-                @click="$router.push({ name: 'student-create' })"
+                @click="$router.push({ name: 'course-create' })"
               >
                 <v-icon class="mr-1">add_circle_outline</v-icon>
-                New Student
+                New Course
               </v-btn>
               <v-spacer/>
               <v-text-field
@@ -49,7 +49,7 @@
               :server-items-length="totalItems"
               loading-text="Loading... Please wait"
               no-data-text="No data found"
-              @click:row="studentDetail"
+              @click:row="courseDetail"
             >
               <template v-slot:item.name="{ item }">
                 {{ item.firstName }} {{ item.middleName }} {{ item.lastName }}
@@ -68,8 +68,8 @@
 
                         <v-list-item
                           ripple
-                          @click="$router.push({name:'student-update',
-                                                params:{studentId:item.id}})">
+                          @click="$router.push({name:'course-update',
+                                                params:{courseId:item.courseId}})">
                           <v-list-item-action>
                             <v-icon>edit</v-icon>
                           </v-list-item-action>
@@ -91,7 +91,7 @@
                     max-width="290"
                   >
                     <v-card>
-                      <v-card-title class="headline">Are you sure to delete this student?</v-card-title>
+                      <v-card-title class="headline">Are you sure to delete this course?</v-card-title>
 
                       <v-card-text>
                       This action cannot be reversed.  
@@ -102,7 +102,7 @@
 
                         <v-btn
                           color="primary"
-                          @click="deleteStudent(item.id)"
+                          @click="deleteCourse(item.courseId)"
                         >
                           Yes
                         </v-btn>
@@ -126,34 +126,30 @@
 </template>
 
 <script>
-import { StudentAPI } from "@/api";
+import { CourseAPI } from "@/api";
 import { tableMixin } from "@/shared/mixins";
-import StudentDetail from "./StudentDetail.vue";
+import CourseDetail from "./CourseDetail.vue";
 
 export default {
-  name: "StudentList",
+  name: "CourseList",
   mixins: [tableMixin],
 
   data() {
     return {
-      resource: StudentAPI,
-      resourceName: "Student",
+      resource: CourseAPI,
+      resourceName: "Course",
       headers: [
         {
-          text: "Student Number",
-          value: "studentNumber"
+          text: "Course Number",
+          value: "courseNumber"
         },
         {
           text: "Name",
-          value: "firstName"
+          value: "courseName"
         },
         {
-          text: "CGPA",
-          value: "cgpa"
-        },
-        {
-          text: "Enrollment Date",
-          value: "enrollmentDate"
+          text: "Credit",
+          value: "courseCredit"
         },
         {
           text: "Actions",
@@ -165,27 +161,27 @@ export default {
     };
   },
   methods: {
-    studentDetail(student) {
+    courseDetail(course) {
       this.$modal.show(
-        StudentDetail,
+        CourseDetail,
         {
-          modalName: "student-detail-modal",
-          item: student
+          modalName: "course-detail-modal",
+          item: course
         },
         {
-          name: "student-detail-modal",
+          name: "course-detail-modal",
           height: "auto",
           scrollable: true,
           width: 800
         }
       );
     },
-    async deleteStudent(id) {
-        await StudentAPI.remove(id);
+    async deleteCourse(id) {
+        await CourseAPI.remove(id);
         this.$notify({
           type: "success",
           title: "Success",
-          message: `Student deleted successfully`
+          message: `Course deleted successfully`
         });
         this.dialog = false;
         this.loadData();

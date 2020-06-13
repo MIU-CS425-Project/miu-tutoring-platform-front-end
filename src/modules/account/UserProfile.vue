@@ -44,9 +44,7 @@
                               <div class="headline bold">
                                 {{ user.name }}
                               </div>
-                              <div class="subheading">Account Number: {{ account.accountNumber }}</div>
-                              <div class="subheading">Account Type: {{ account.type }}</div>
-                              <div class="subheading">Balance: {{ account.deposit }}</div>
+                              <div class="subheading">{{ user.email }}</div>
                               <v-chip
                                 label
                                 small
@@ -63,7 +61,6 @@
                 </v-container>
               </v-tab-item>
               <v-tab-item>
-                <form-error-messages :messages="errorMessage" />
                 <v-container 
                   fluid 
                   pl-5 
@@ -80,7 +77,6 @@
                           v-validate="'required|min:5'"
                           ref="oldPassword"
                           v-model="item.oldPassword"
-                          :error-messages="errors.collect('oldPassword')"
                           label="Old password"
                           name="oldPassword"
                           type="password"
@@ -98,7 +94,6 @@
                           v-validate="'required|min:5'"
                           ref="newPassword"
                           v-model="item.newPassword"
-                          :error-messages="errors.collect('newPassword')"
                           label="New password"
                           name="newPassword"
                           type="password"
@@ -115,9 +110,6 @@
                         <v-text-field
                           v-validate="'required|confirmed:newPassword'"
                           v-model="item.confirmPassword"
-                          :error-messages="
-                            errors.collect('password_confirmation')
-                          "
                           label="Password confirm"
                           name="password_confirmation"
                           type="password"

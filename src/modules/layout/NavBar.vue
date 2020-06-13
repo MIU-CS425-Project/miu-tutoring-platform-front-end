@@ -36,12 +36,12 @@
         <v-list>
           <v-list-item>
             <v-list-item-avatar>
-              <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
+              <img src="@/assets/avatar_anonymous.png" alt="user_profile">
             </v-list-item-avatar>
 
             <v-list-item-content @click="$router.push({ name: 'user-profile' }), (visible = false)">
               <v-list-item-title>{{ user.name }}</v-list-item-title>
-              <v-list-item-subtitle>{{ user.role }}</v-list-item-subtitle>
+              <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
             </v-list-item-content>
 
             <v-list-item-action>

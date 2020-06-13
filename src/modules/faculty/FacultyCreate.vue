@@ -16,7 +16,7 @@
                 slot="activator"
                 icon
                 v-on="on"
-                @click="$router.push({ name: 'student-list' })">
+                @click="$router.push({ name: 'faculty-list' })">
                 <v-icon>arrow_back</v-icon>
               </v-btn>
             </template>
@@ -25,7 +25,7 @@
           <v-toolbar-title
             class="blue-grey--text text--darken-2 font-weight-bold"
           >
-            Add Student
+            Add Faculty
           </v-toolbar-title>
           <v-spacer/>
           <v-btn
@@ -75,55 +75,18 @@
             </v-flex>
           </v-layout>
           <v-layout row>
-            <v-flex xs4>
-              <v-text-field
-                :rules="requiredRules"
-                v-model="item.studentNumber"
-                label="Student Number"
-                name="studentNumber"
-                filled                
-              />
-            </v-flex>
             <v-flex
               xs4
-              pl-3
             >
               <v-text-field
-                v-model="item.cgpa"
-                label="CGPA"
-                name="cgpa"
-                type="number"
+                v-model="item.department"
+                label="Department"
+                name="department"
                 filled                
               />
             </v-flex>
-             <v-flex pl-3 xs4>
-              <v-dialog
-                ref="enrollmentDialog"
-                v-model="enrollmentModal"
-                :enrollment-value.sync="enrollmentDate"
-                persistent
-                width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                   :rules="requiredRules"
-                    v-model="enrollmentDate"
-                    label="Enrollment"
-                    readonly
-                    v-on="on"
-                    filled
-                  ></v-text-field>
-                </template>
-                <v-date-picker v-model="enrollmentDate" scrollable>
-                  <v-spacer></v-spacer>
-                  <v-btn text color="primary" @click="enrollmentModal = false">Cancel</v-btn>
-                  <v-btn text color="primary" @click="$refs.enrollmentDialog.save(enrollmentDate)">OK</v-btn>
-                </v-date-picker>
-              </v-dialog>
-            </v-flex>
-          </v-layout>
-          <v-layout row>
-            <v-flex xs6>
+            <v-flex 
+              pl-3 xs4>
               <v-text-field
                 :rules="emailRules"
                 v-model="item.username"
@@ -133,7 +96,7 @@
               />
             </v-flex>
             <v-flex 
-              xs6 
+              xs4
               pl-3>
               <v-text-field
                 :rules="passwordRules"
@@ -151,10 +114,10 @@
 </template>
 
 <script>
-import { StudentAPI } from "@/api";
+import { FacultyAPI } from "@/api";
 
 export default {
-  name: "StudentCreate",
+  name: "FacultyCreate",
   data() {
     return {
       valid: true,
@@ -177,7 +140,7 @@ export default {
       this.$refs.form.validate();
       if(this.valid){
         this.item.enrollmentDate = this.enrollmentDate;
-          StudentAPI.create(this.item)
+          FacultyAPI.create(this.item)
             .then(
               res => {
               if(!res){
@@ -190,10 +153,10 @@ export default {
                 this.$notify({
                   type: "success",
                   title: "Success",
-                  message: "Student created successfully"
+                  message: "Faculty created successfully"
                 });
                 this.item = {};
-                this.$router.push({ name: "student-list" });
+                this.$router.push({ name: "faculty-list" });
               }
             })
         }

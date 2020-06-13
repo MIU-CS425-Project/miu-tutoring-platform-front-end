@@ -1,21 +1,30 @@
-import GroupChat from "./GroupChat.vue";
-import GroupList from "./GroupList.vue";
+import TutorialGroupList from "./TutorialGroupList.vue";
+import TutorialGroupCreate from "./TutorialGroupCreate.vue";
+import TutorialGroupUpdate from "./TutorialGroupUpdate.vue";
 
 export default [
   {
-    path: "tutorial-group/:tutorialGroupId",
-    name: "tutorial-group-chat",
-    component: GroupChat,
+    path: "tutorialgroups",
+    name: "tutorialgroup-list",
+    component: TutorialGroupList,
     meta: {
-      allowedRoles: ["Administrator"]
+      allowedUserRoles: ["Administrator"]
     }
   },
   {
-    path: "tutorial-group-list",
-    name: "tutorial-group-list",
-    component: GroupList,
+    path: "tutorialgroups/new",
+    name: "tutorialgroup-create",
+    component: TutorialGroupCreate,
     meta: {
-      allowedRoles: ["Administrator"]
+      allowedUserRoles: ["Administrator"]
+    }
+  },
+  {
+    path: "tutorialgroups/:tutorialGroupId/update",
+    name: "tutorialgroup-update",
+    component: TutorialGroupUpdate,
+    meta: {
+      allowedUserRoles: ["Administrator"]
     }
   }
 ];

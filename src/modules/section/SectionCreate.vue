@@ -16,7 +16,7 @@
                 slot="activator"
                 icon
                 v-on="on"
-                @click="$router.push({ name: 'student-list' })">
+                @click="$router.push({ name: 'section-list' })">
                 <v-icon>arrow_back</v-icon>
               </v-btn>
             </template>
@@ -25,7 +25,7 @@
           <v-toolbar-title
             class="blue-grey--text text--darken-2 font-weight-bold"
           >
-            Add Student
+            Add Section
           </v-toolbar-title>
           <v-spacer/>
           <v-btn
@@ -43,107 +43,67 @@
           <!-- row 1 -->
           <v-layout row>
             <v-flex xs4>
-              <v-text-field
+           <v-text-field
                 :rules="requiredRules"
-                v-model="item.firstName"
-                label="First Name"
-                name="firstName"
+                v-model="item.sectionName"
+                label="Section Name"
+                name="sectionName"
+                filled                
+              />
+            </v-flex>
+            <v-flex 
+              xs4 
+              pl-3>
+           <v-text-field
+                :rules="requiredRules"
+                v-model="item.classRoom"
+                label="Class Room"
+                name="classRoom"
+                filled                
+              />
+            </v-flex>
+            <v-flex 
+              xs4 
+              pl-3>
+              <v-select
+                :rules="requiredRules"
+                :items="courses"
+                label="Course"
+                item-text="courseName"
+                v-model="item.course"
                 filled
-                autofocus
-              />
-            </v-flex>
-            <v-flex 
-              xs4 
-              pl-3>
-              <v-text-field
-                v-model="item.middleName"
-                label="Middle Name"
-                name="middleName"
-                filled                
-              />
-            </v-flex>
-            <v-flex 
-              xs4 
-              pl-3>
-              <v-text-field
-                :rules="requiredRules"
-                v-model="item.lastName"
-                label="Last Name"
-                name="lastName"
-                filled                
-              />
+                return-object
+              ></v-select>
             </v-flex>
           </v-layout>
           <v-layout row>
-            <v-flex xs4>
-              <v-text-field
-                :rules="requiredRules"
-                v-model="item.studentNumber"
-                label="Student Number"
-                name="studentNumber"
-                filled                
-              />
-            </v-flex>
-            <v-flex
-              xs4
-              pl-3
-            >
-              <v-text-field
-                v-model="item.cgpa"
-                label="CGPA"
-                name="cgpa"
-                type="number"
-                filled                
-              />
-            </v-flex>
-             <v-flex pl-3 xs4>
+             <v-flex xs4>
               <v-dialog
                 ref="enrollmentDialog"
                 v-model="enrollmentModal"
-                :enrollment-value.sync="enrollmentDate"
+                :enrollment-value.sync="month"
                 persistent
                 width="290px"
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
-                   :rules="requiredRules"
-                    v-model="enrollmentDate"
-                    label="Enrollment"
+                    :rules="requiredRules"
+                    v-model="month"
+                    label="Block Month"
                     readonly
                     v-on="on"
                     filled
                   ></v-text-field>
                 </template>
-                <v-date-picker v-model="enrollmentDate" scrollable>
+                <v-date-picker v-model="month" type="month" scrollable>
                   <v-spacer></v-spacer>
                   <v-btn text color="primary" @click="enrollmentModal = false">Cancel</v-btn>
-                  <v-btn text color="primary" @click="$refs.enrollmentDialog.save(enrollmentDate)">OK</v-btn>
+                  <v-btn text color="primary" @click="$refs.enrollmentDialog.save(month)">OK</v-btn>
                 </v-date-picker>
               </v-dialog>
             </v-flex>
           </v-layout>
-          <v-layout row>
-            <v-flex xs6>
-              <v-text-field
-                :rules="emailRules"
-                v-model="item.username"
-                label="Email"
-                name="username"
-                filled
-              />
-            </v-flex>
-            <v-flex 
-              xs6 
-              pl-3>
-              <v-text-field
-                :rules="passwordRules"
-                v-model="item.password"
-                label="Password"
-                name="password"
-                filled                
-              />
-            </v-flex>
-          </v-layout>
+          
         </v-card>
       </v-form>
     </v-flex>
@@ -151,33 +111,31 @@
 </template>
 
 <script>
-import { StudentAPI } from "@/api";
+import { SectionAPI, CourseAPI } from "@/api";
 
 export default {
-  name: "StudentCreate",
+  name: "SectionCreate",
   data() {
     return {
       valid: true,
-      enrollmentDate: null,
+      month: null,
       enrollmentModal: false,
       item: {},
       requiredRules: [v => !!v || "This field is required"],
-      emailRules: [
-        v => !!v || 'Email is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
-      ],
-      passwordRules: [
-        v => !!v || 'Password is required',
-        v => v.length >= 3 || 'Password must be greater than three characters'
-      ]
+      courses: []
     };
+  },
+  created() {
+    CourseAPI.all().then(res => {
+      this.courses = res.content;
+    });
   },
   methods: {
     save() {
       this.$refs.form.validate();
       if(this.valid){
-        this.item.enrollmentDate = this.enrollmentDate;
-          StudentAPI.create(this.item)
+        this.item.month = this.month;
+          SectionAPI.create(this.item)
             .then(
               res => {
               if(!res){
@@ -190,10 +148,10 @@ export default {
                 this.$notify({
                   type: "success",
                   title: "Success",
-                  message: "Student created successfully"
+                  message: "Section created successfully"
                 });
                 this.item = {};
-                this.$router.push({ name: "student-list" });
+                this.$router.push({ name: "section-list" });
               }
             })
         }

@@ -11,28 +11,30 @@
           class="grey lighten-4 elevation-2 mb-1"
         >
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                slot="activator"
-                icon
-                v-on="on"
-                @click="$router.push({ name: 'student-list' })">
-                <v-icon>arrow_back</v-icon>
-              </v-btn>
-            </template>
+
+          <template v-slot:activator="{ on }">
+
+            <v-btn
+              slot="activator"
+              icon
+              v-on="on"
+              @click="$router.push({ name: 'faculty-list' })">
+              <v-icon>arrow_back</v-icon>
+            </v-btn>
+          </template>
             <span>Cancel</span>
           </v-tooltip>
           <v-toolbar-title
             class="blue-grey--text text--darken-2 font-weight-bold"
           >
-            Add Student
+            Update Faculty
           </v-toolbar-title>
           <v-spacer/>
           <v-btn
             color="primary"
             type="submit"
           >
-            Save
+            Update
           </v-btn>
         </v-toolbar>
 
@@ -78,9 +80,9 @@
             <v-flex xs4>
               <v-text-field
                 :rules="requiredRules"
-                v-model="item.studentNumber"
-                label="Student Number"
-                name="studentNumber"
+                v-model="item.facultyNumber"
+                label="Faculty Number"
+                name="facultyNumber"
                 filled                
               />
             </v-flex>
@@ -122,28 +124,6 @@
               </v-dialog>
             </v-flex>
           </v-layout>
-          <v-layout row>
-            <v-flex xs6>
-              <v-text-field
-                :rules="emailRules"
-                v-model="item.username"
-                label="Email"
-                name="username"
-                filled
-              />
-            </v-flex>
-            <v-flex 
-              xs6 
-              pl-3>
-              <v-text-field
-                :rules="passwordRules"
-                v-model="item.password"
-                label="Password"
-                name="password"
-                filled                
-              />
-            </v-flex>
-          </v-layout>
         </v-card>
       </v-form>
     </v-flex>
@@ -151,52 +131,48 @@
 </template>
 
 <script>
-import { StudentAPI } from "@/api";
+import { FacultyAPI } from "@/api";
 
 export default {
-  name: "StudentCreate",
+  name: "FacultyUpdate",
   data() {
     return {
       valid: true,
       enrollmentDate: null,
       enrollmentModal: false,
-      item: {},
-      requiredRules: [v => !!v || "This field is required"],
-      emailRules: [
-        v => !!v || 'Email is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
-      ],
-      passwordRules: [
-        v => !!v || 'Password is required',
-        v => v.length >= 3 || 'Password must be greater than three characters'
-      ]
+      item: {}
     };
+  },
+  created() {
+    const { facultyId } = this.$route.params;
+    FacultyAPI.get(facultyId).then(res => {
+      this.item = res;
+      this.enrollmentDate = this.item.enrollmentDate;
+    });
   },
   methods: {
     save() {
       this.$refs.form.validate();
-      if(this.valid){
+      if (this.valid) {
         this.item.enrollmentDate = this.enrollmentDate;
-          StudentAPI.create(this.item)
-            .then(
-              res => {
-              if(!res){
-                this.$notify({
-                    type: "danger",
-                    title: "Error",
-                    message: "There is a user with the given email"
-                });
-              } else{
-                this.$notify({
-                  type: "success",
-                  title: "Success",
-                  message: "Student created successfully"
-                });
-                this.item = {};
-                this.$router.push({ name: "student-list" });
-              }
-            })
-        }
+        FacultyAPI.update(this.item)
+          .then(() => {
+            this.item.id = this.$route.params;
+            this.item = {};
+            this.$notify({
+              type: "success",
+              title: "Success",
+              message: "Faculty updated successfully"
+            });
+            this.$router.push({ name: "faculty-list" });
+          })
+          .catch(err => {
+            if (err.statusCode === 422) {
+              const { messages } = err.details;
+              this.errorMessage = messages;
+            }
+          });
+      }
     }
   }
 };

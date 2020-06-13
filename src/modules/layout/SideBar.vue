@@ -9,17 +9,23 @@
           <v-img src="@/assets/miu.png"></v-img>
         </v-list-item-avatar>
 
-        <v-list-item-title>{{user.name}}</v-list-item-title>
+        <v-list-item-content>
+          <v-list-item-title>{{user.name}}</v-list-item-title>
+              <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
+        </v-list-item-content>
+
 
       </v-list-item>
 
       <v-divider></v-divider>
 
       <v-list>
+      <template v-for="item in menus" >
+
         <v-list-item
-          v-for="item in menus"
           :key="item.title"
           :to="{ name: item.route }"
+          v-if="isAuthorized(item.allowedUserRoles)"
         >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
@@ -29,6 +35,7 @@
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+      </template>
       </v-list>
     </v-navigation-drawer>
 </template>
@@ -49,27 +56,71 @@ export default {
       user: AccountService.getProfile(),
       menus: [
         {
-          title: "Tutorial Groups",
+          title: "Tutor Groups",
           icon: "people",
-          route: "tutorial-group-list"
+          route: "group-list",
+          allowedUserRoles: ["ROLE_STUDENT"]
+        },
+        {
+          title: "Requests",
+          icon: "people",
+          route: "group-list",
+          allowedUserRoles: ["ROLE_STUDENT"]
+        },
+        {
+          title: "Courses",
+          icon: "people",
+          route: "group-list",
+          allowedUserRoles: ["ROLE_STUDENT"]
         },
         {
           title: "Students",
           icon: "people",
-          route: "student-list"
-        },      
+          route: "student-list",
+          allowedUserRoles: ["ROLE_ADMIN"]
+        }, 
+        {
+          title: "Faculty",
+          icon: "people",
+          route: "faculty-list",
+          allowedUserRoles: ["ROLE_ADMIN"]
+        }, 
+        {
+          title: "Courses",
+          icon: "people",
+          route: "course-list",
+          allowedUserRoles: ["ROLE_ADMIN"]
+        },
+        {
+          title: "Sections",
+          icon: "people",
+          route: "section-list",
+          allowedUserRoles: ["ROLE_ADMIN"]
+        },
+        {
+          title: "Tutorial Groups",
+          icon: "people",
+          route: "tutorialgroup-list",
+          allowedUserRoles: ["ROLE_FACULTY"]
+        },  
+        {
+          title: "Tutor Requests",
+          icon: "people",
+          route: "tutorrequest-list",
+          allowedUserRoles: ["ROLE_FACULTY"]
+        },    
       ]
     };
   },
   computed: {
     isAdministrator() {
-      return this.authenticatedProfileUserRole === "Administrator";
+      return this.authenticatedProfileUserRole.includes("ROLE_ADMIN");
     },
-    isCommitteeOfficer() {
-      return this.authenticatedProfileUserRole === "Committee Officer";
+    isFaculty() {
+      return this.authenticatedProfileUserRole.includes("ROLE_FACULTY");
     },
-    isInsideMembers() {
-      return this.authenticatedProfileUserRole === "Members";
+    isStudent() {
+      return this.authenticatedProfileUserRole.includes("ROLE_STUDENT");
     },
     cssProps() {
       return {
@@ -87,19 +138,17 @@ export default {
     }
   },
   created() {
-    this.authenticatedProfileUserRole = AccountService.getProfile().role;
+    this.authenticatedProfileUserRole = AccountService.getRoles();
   },
   methods: {
-    isAuthorized(allowedUserRoles) {
-      if (allowedUserRoles.includes("Administrator") && this.isAdministrator) {
-        return true;
-      } else if (
-        allowedUserRoles.includes("Committee Officer") &&
-        (this.isAdministrator || this.isCommitteeOfficer)
-      ) {
-        return true;
-      }
-      return false;
+    isAuthorized(allowedUserRoles) {      
+      let isAllowed = false;
+      this.authenticatedProfileUserRole.forEach(role => {
+        if(allowedUserRoles.includes(role)){
+          isAllowed =  true
+        }
+      });
+      return isAllowed;
     }
   }
 };

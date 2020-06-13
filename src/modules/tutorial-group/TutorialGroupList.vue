@@ -6,7 +6,7 @@
       <v-layout >
         <v-flex xs12>
           <div class="headline font-weight-thin">
-            Students
+            Tutorial Groups
           </div>
         </v-flex>
       </v-layout>
@@ -26,10 +26,10 @@
               <v-btn
                 color="primary"
                 class="pa-0 pl-2 pr-3"
-                @click="$router.push({ name: 'student-create' })"
+                @click="$router.push({ name: 'tutorialgroup-create' })"
               >
                 <v-icon class="mr-1">add_circle_outline</v-icon>
-                New Student
+                New Tutorial Group
               </v-btn>
               <v-spacer/>
               <v-text-field
@@ -49,10 +49,10 @@
               :server-items-length="totalItems"
               loading-text="Loading... Please wait"
               no-data-text="No data found"
-              @click:row="studentDetail"
+              @click:row="tutorialgroupDetail"
             >
-              <template v-slot:item.name="{ item }">
-                {{ item.firstName }} {{ item.middleName }} {{ item.lastName }}
+              <template v-slot:item.section="{ item }">
+                {{ item.section ? item.section.sectionName : '' }}
               </template>
               <template v-slot:item.actions="{ item }">
                 <div @click.stop>
@@ -68,8 +68,8 @@
 
                         <v-list-item
                           ripple
-                          @click="$router.push({name:'student-update',
-                                                params:{studentId:item.id}})">
+                          @click="$router.push({name:'tutorialgroup-update',
+                                                params:{tutorialGroupId:item.tutorialGroupId}})">
                           <v-list-item-action>
                             <v-icon>edit</v-icon>
                           </v-list-item-action>
@@ -91,7 +91,7 @@
                     max-width="290"
                   >
                     <v-card>
-                      <v-card-title class="headline">Are you sure to delete this student?</v-card-title>
+                      <v-card-title class="headline">Are you sure to delete this tutorialgroup?</v-card-title>
 
                       <v-card-text>
                       This action cannot be reversed.  
@@ -102,7 +102,7 @@
 
                         <v-btn
                           color="primary"
-                          @click="deleteStudent(item.id)"
+                          @click="deleteTutorialGroup(item.tutorialGroupId)"
                         >
                           Yes
                         </v-btn>
@@ -126,34 +126,30 @@
 </template>
 
 <script>
-import { StudentAPI } from "@/api";
+import { TutorialGroupAPI } from "@/api";
 import { tableMixin } from "@/shared/mixins";
-import StudentDetail from "./StudentDetail.vue";
+import TutorialGroupDetail from "./TutorialGroupDetail.vue";
 
 export default {
-  name: "StudentList",
+  name: "TutorialGroupList",
   mixins: [tableMixin],
 
   data() {
     return {
-      resource: StudentAPI,
-      resourceName: "Student",
+      resource: TutorialGroupAPI,
+      resourceName: "TutorialGroup",
       headers: [
         {
-          text: "Student Number",
-          value: "studentNumber"
+          text: "Group Number",
+          value: "tutorialGroupNumber"
         },
         {
-          text: "Name",
-          value: "firstName"
+          text: "Section",
+          value: "section"
         },
         {
-          text: "CGPA",
-          value: "cgpa"
-        },
-        {
-          text: "Enrollment Date",
-          value: "enrollmentDate"
+          text: "Members",
+          value: "member"
         },
         {
           text: "Actions",
@@ -165,27 +161,27 @@ export default {
     };
   },
   methods: {
-    studentDetail(student) {
+    tutorialgroupDetail(tutorialgroup) {
       this.$modal.show(
-        StudentDetail,
+        TutorialGroupDetail,
         {
-          modalName: "student-detail-modal",
-          item: student
+          modalName: "tutorialgroup-detail-modal",
+          item: tutorialgroup
         },
         {
-          name: "student-detail-modal",
+          name: "tutorialgroup-detail-modal",
           height: "auto",
           scrollable: true,
           width: 800
         }
       );
     },
-    async deleteStudent(id) {
-        await StudentAPI.remove(id);
+    async deleteTutorialGroup(id) {
+        await TutorialGroupAPI.remove(id);
         this.$notify({
           type: "success",
           title: "Success",
-          message: `Student deleted successfully`
+          message: `TutorialGroup deleted successfully`
         });
         this.dialog = false;
         this.loadData();

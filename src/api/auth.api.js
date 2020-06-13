@@ -2,10 +2,10 @@ import AccountService from "@/services";
 import { API_ROOT } from ".";
 import Request from "./request";
 
-const PATH = "users";
+const PATH = "/authenticate";
 const AuthAPI = {
-  login(email, password) {
-    return Request.post(`${API_ROOT}${PATH}/login`, { email, password });
+  login(username, password) {
+    return Request.post(`${API_ROOT}${PATH}`, { username, password });
   },
   forgot(username) {
     return Request.post(`${API_ROOT}${PATH}/request-password-change`, {

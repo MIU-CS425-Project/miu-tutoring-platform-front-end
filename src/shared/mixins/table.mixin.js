@@ -43,13 +43,26 @@ const tableMixin = {
       this.loading = true;
 
       const { page, itemsPerPage, sortBy, sortDesc } = this.options
-      const sortColumn = sortBy.length != 0 ? sortBy[0]: this.headers[0].value;
+      const sortColumn = sortBy.length != 0 ? sortBy[0]: "";
       const sortDirection = sortDesc.length != 0 ? sortDesc[0]: false;
       
-      const res = await this.resource.all(page-1, itemsPerPage, sortColumn, sortDirection);
-      this.items = res.content;
-      this.totalItems = res.totalElements;
-      this.loading = false;
+      this.resource.all(page-1, itemsPerPage, sortColumn, sortDirection).then(
+        (res)=>{
+          this.items = res.content;
+          this.totalItems = res.totalElements;
+          this.loading = false;
+      })
+      .catch(err => {
+        if(err == "Forbidden"){
+          this.$notify({
+            type: "danger",
+            title: "Error",
+            message: "Nou authorized"
+          });
+        }
+        this.loading = false;
+      })
+
     }
   }
 };

@@ -6,7 +6,10 @@ import VueRouter from 'vue-router'
 import VModal from "vue-js-modal";
 import Notify from "vue-notifyjs";
 
+import VueCodemirror from 'vue-codemirror';
 import { ValidationProvider } from 'vee-validate';
+import 'codemirror/lib/codemirror.css'
+
 Vue.use(Vuetify);
 Vue.use(Vuex);
 Vue.use(VueRouter);
@@ -17,6 +20,8 @@ Vue.use(Notify, {
 Vue.use(VModal, { dynamic: true });
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.use(require('vue-moment'));
+
+Vue.use(VueCodemirror)
 
 export default new Vuetify({
   theme: {

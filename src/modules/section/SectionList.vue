@@ -6,7 +6,7 @@
       <v-layout >
         <v-flex xs12>
           <div class="headline font-weight-thin">
-            Students
+            Sections
           </div>
         </v-flex>
       </v-layout>
@@ -26,10 +26,10 @@
               <v-btn
                 color="primary"
                 class="pa-0 pl-2 pr-3"
-                @click="$router.push({ name: 'student-create' })"
+                @click="$router.push({ name: 'section-create' })"
               >
                 <v-icon class="mr-1">add_circle_outline</v-icon>
-                New Student
+                New Section
               </v-btn>
               <v-spacer/>
               <v-text-field
@@ -49,10 +49,10 @@
               :server-items-length="totalItems"
               loading-text="Loading... Please wait"
               no-data-text="No data found"
-              @click:row="studentDetail"
+              @click:row="sectionDetail"
             >
-              <template v-slot:item.name="{ item }">
-                {{ item.firstName }} {{ item.middleName }} {{ item.lastName }}
+              <template v-slot:item.course="{ item }">
+                {{ item.course.courseNumber }} - {{ item.course.courseName }}
               </template>
               <template v-slot:item.actions="{ item }">
                 <div @click.stop>
@@ -68,8 +68,8 @@
 
                         <v-list-item
                           ripple
-                          @click="$router.push({name:'student-update',
-                                                params:{studentId:item.id}})">
+                          @click="$router.push({name:'section-update',
+                                                params:{sectionId:item.sectionId}})">
                           <v-list-item-action>
                             <v-icon>edit</v-icon>
                           </v-list-item-action>
@@ -91,7 +91,7 @@
                     max-width="290"
                   >
                     <v-card>
-                      <v-card-title class="headline">Are you sure to delete this student?</v-card-title>
+                      <v-card-title class="headline">Are you sure to delete this section?</v-card-title>
 
                       <v-card-text>
                       This action cannot be reversed.  
@@ -102,7 +102,7 @@
 
                         <v-btn
                           color="primary"
-                          @click="deleteStudent(item.id)"
+                          @click="deleteSection(item.sectionId)"
                         >
                           Yes
                         </v-btn>
@@ -126,34 +126,35 @@
 </template>
 
 <script>
-import { StudentAPI } from "@/api";
+import { SectionAPI } from "@/api";
 import { tableMixin } from "@/shared/mixins";
-import StudentDetail from "./StudentDetail.vue";
+import SectionDetail from "./SectionDetail.vue";
 
 export default {
-  name: "StudentList",
+  name: "SectionList",
   mixins: [tableMixin],
 
   data() {
     return {
-      resource: StudentAPI,
-      resourceName: "Student",
+      resource: SectionAPI,
+      resourceName: "Section",
       headers: [
         {
-          text: "Student Number",
-          value: "studentNumber"
+          text: "Section Name",
+          value: "sectionName"
         },
         {
-          text: "Name",
-          value: "firstName"
+          text: "Course",
+          value: "course",
+          sortable: false
         },
         {
-          text: "CGPA",
-          value: "cgpa"
+          text: "Class Room",
+          value: "classRoom"
         },
         {
-          text: "Enrollment Date",
-          value: "enrollmentDate"
+          text: "Month Block",
+          value: "month"
         },
         {
           text: "Actions",
@@ -165,27 +166,27 @@ export default {
     };
   },
   methods: {
-    studentDetail(student) {
+    sectionDetail(section) {
       this.$modal.show(
-        StudentDetail,
+        SectionDetail,
         {
-          modalName: "student-detail-modal",
-          item: student
+          modalName: "section-detail-modal",
+          item: section
         },
         {
-          name: "student-detail-modal",
+          name: "section-detail-modal",
           height: "auto",
           scrollable: true,
           width: 800
         }
       );
     },
-    async deleteStudent(id) {
-        await StudentAPI.remove(id);
+    async deleteSection(id) {
+        await SectionAPI.remove(id);
         this.$notify({
           type: "success",
           title: "Success",
-          message: `Student deleted successfully`
+          message: `Section deleted successfully`
         });
         this.dialog = false;
         this.loadData();

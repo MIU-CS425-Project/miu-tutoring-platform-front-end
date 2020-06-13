@@ -79,7 +79,7 @@
                         type="submit" 
                         block 
                         color="primary"
-                        :disabled="!valid"
+                        :disabled="!valid || loading"
                         >
                         Login
                       </v-btn>
@@ -119,7 +119,8 @@ export default {
       passwordRules: [
         v => !!v || 'Password is required',
         v => v.length >= 3 || 'Password must be greater than three characters'
-      ]
+      ],
+      loading: false
     };
   },
   methods: {
@@ -133,9 +134,23 @@ export default {
           AccountService.login(this.user.email, this.user.password)
             .then(() => {
               this.$refs.form.reset();
-              this.$router.push({ name: "tutorial-group-list" });
+              const roles = AccountService.getRoles();
+              if(roles.includes("ROLE_ADMIN")){
+                this.$router.push({ name: "student-list" });
+              } else if(roles.includes("ROLE_STUDENT")){
+                this.$router.push({ name: "group-list" });
+              } else if(roles.includes("ROLE_FACULTY")){
+                this.$router.push({ name: "tutorialgroup-list" });
+              }
             })
             .catch(err => {
+              if(err == "Forbidden"){
+                this.$notify({
+                  type: "danger",
+                  title: "Error",
+                  message: "Incorrect username or password"
+                });
+              }              
               this.loading = false;
               self.authError = err;
             });
