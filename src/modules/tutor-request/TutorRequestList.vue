@@ -53,7 +53,7 @@
                       left
                       bottom>
                        <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">more_vert</v-icon>
+                        <v-icon v-on="on">mdi-dots-vertical</v-icon>
                       </template>
 
                       <v-list dense >
@@ -63,7 +63,7 @@
                           @click="$router.push({name:'tutorrequest-update',
                                                 params:{tutorrequestId:item.tutorrequestId}})">
                           <v-list-item-action>
-                            <v-icon>edit</v-icon>
+                            <v-icon>mdi-pencil</v-icon>
                           </v-list-item-action>
                           <v-list-item-title>Approve</v-list-item-title>
                         </v-list-item>
@@ -71,7 +71,7 @@
                           ripple
                           @click="dialog = true">
                           <v-list-item-action>
-                            <v-icon>edit</v-icon>
+                            <v-icon>mdi-pencil</v-icon>
                           </v-list-item-action>
                           <v-list-item-title>Reject</v-list-item-title>
                         </v-list-item>

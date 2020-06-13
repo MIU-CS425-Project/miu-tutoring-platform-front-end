@@ -59,7 +59,7 @@
                     <v-text-field
                       :rules="emailRules"
                       v-model="user.email"
-                      prepend-icon="person"
+                      prepend-icon="mdi-account"
                       name="email"
                       label="Email"
                       type="text"
@@ -68,7 +68,7 @@
                     <v-text-field
                       :rules="passwordRules"
                       v-model="user.password"
-                      prepend-icon="lock"
+                      prepend-icon="mdi-account-key"
                       name="password"
                       autocomplete="current-password"
                       label="Password"

@@ -8,7 +8,8 @@ import Notify from "vue-notifyjs";
 
 import VueCodemirror from 'vue-codemirror';
 import { ValidationProvider } from 'vee-validate';
-import 'codemirror/lib/codemirror.css'
+import 'codemirror/lib/codemirror.css';
+import '@mdi/font/css/materialdesignicons.css'
 
 Vue.use(Vuetify);
 Vue.use(Vuex);
@@ -24,6 +25,9 @@ Vue.use(require('vue-moment'));
 Vue.use(VueCodemirror)
 
 export default new Vuetify({
+  icons: {
+    iconfont: 'mdi',
+  },
   theme: {
     themes: {
       light: {
