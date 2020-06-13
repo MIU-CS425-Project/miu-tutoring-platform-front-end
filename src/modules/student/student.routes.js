@@ -20,7 +20,7 @@ export default [
     }
   },
   {
-    path: "students/:studentId/update",
+    path: "students/:id/update",
     name: "student-update",
     component: StudentUpdate,
     meta: {

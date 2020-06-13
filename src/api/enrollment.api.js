@@ -1,9 +1,9 @@
 import { API_ROOT } from ".";
 import Request from "./request";
 
-const PATH = "/student";
+const PATH = "/enrollment";
 
-const StudentAPI = {
+const EnrollmentAPI = {
   get(id) {
     return Request.get(`${API_ROOT}${PATH}/get/${id}`);
   },
@@ -28,4 +28,4 @@ const StudentAPI = {
   }
 };
 
-export default StudentAPI;
+export default EnrollmentAPI;
