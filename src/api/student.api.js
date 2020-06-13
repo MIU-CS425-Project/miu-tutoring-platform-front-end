@@ -16,7 +16,7 @@ const StudentAPI = {
     return Request.post(`${API_ROOT}${PATH}/register`, data);
   },
   update(data) {
-    return Request.put(`${API_ROOT}${PATH}/edit/${data.studentId}`, data);
+    return Request.put(`${API_ROOT}${PATH}/edit/${data.id}`, data);
   },
   remove(id) {
     return Request.delete(`${API_ROOT}${PATH}/delete/${id}`);

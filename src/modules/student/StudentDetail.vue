@@ -50,7 +50,7 @@ export default {
       this.$modal.hide(this.modalName);
       this.$router.push({
         name: "student-update",
-        params: { studentId: this.item.studentId }
+        params: { id: this.item.id }
       });
     }
   }
