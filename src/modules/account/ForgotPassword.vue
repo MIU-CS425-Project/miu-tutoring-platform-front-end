@@ -48,7 +48,7 @@
                       v-validate="'required'"
                       v-model="username"
                       :error-messages="errors.collect('username')"
-                      prepend-icon="person"
+                      prepend-icon="mdi-account"
                       name="username"
                       label="User"
                       type="text"

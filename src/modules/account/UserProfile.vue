@@ -14,11 +14,11 @@
             color="white">
             <v-tabs fixed-tabs>
               <v-tab ripple>
-                <v-icon>account_circle</v-icon>
+                <v-icon>mdi-account-circle</v-icon>
                 Basic
               </v-tab>
               <v-tab ripple>
-                <v-icon>lock</v-icon>
+                <v-icon>mdi-mdi-account-key</v-icon>
                 Change Password
               </v-tab>
               <v-tab-item>

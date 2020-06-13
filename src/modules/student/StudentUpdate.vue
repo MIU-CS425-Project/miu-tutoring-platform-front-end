@@ -19,7 +19,7 @@
               icon
               v-on="on"
               @click="$router.push({ name: 'student-list' })">
-              <v-icon>arrow_back</v-icon>
+              <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
           </template>
             <span>Cancel</span>
@@ -140,12 +140,13 @@ export default {
       valid: true,
       enrollmentDate: null,
       enrollmentModal: false,
-      item: {}
+      item: {},
+      requiredRules: [v => !!v || "This field is required"],
     };
   },
   created() {
-    const { studentId } = this.$route.params;
-    StudentAPI.get(studentId).then(res => {
+    const { id } = this.$route.params;
+    StudentAPI.get(id).then(res => {
       this.item = res;
       this.enrollmentDate = this.item.enrollmentDate;
     });

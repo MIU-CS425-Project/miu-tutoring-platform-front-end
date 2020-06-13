@@ -57,55 +57,55 @@ export default {
       menus: [
         {
           title: "Tutor Groups",
-          icon: "people",
+          icon: "mdi-forum",
           route: "group-list",
           allowedUserRoles: ["ROLE_STUDENT"]
         },
         {
           title: "Requests",
-          icon: "people",
+          icon: "mdi-clipboard-list",
           route: "group-list",
           allowedUserRoles: ["ROLE_STUDENT"]
         },
         {
           title: "Courses",
-          icon: "people",
+          icon: "mdi-notebook-multiple",
           route: "group-list",
           allowedUserRoles: ["ROLE_STUDENT"]
         },
         {
           title: "Students",
-          icon: "people",
+          icon: "mdi-account-group",
           route: "student-list",
           allowedUserRoles: ["ROLE_ADMIN"]
         }, 
         {
-          title: "Faculty",
-          icon: "people",
+          title: "Faculties",
+          icon: "mdi-teach",
           route: "faculty-list",
           allowedUserRoles: ["ROLE_ADMIN"]
         }, 
         {
           title: "Courses",
-          icon: "people",
+          icon: "mdi-notebook-multiple",
           route: "course-list",
           allowedUserRoles: ["ROLE_ADMIN"]
         },
         {
           title: "Sections",
-          icon: "people",
+          icon: "mdi-google-classroom",
           route: "section-list",
           allowedUserRoles: ["ROLE_ADMIN"]
         },
         {
           title: "Tutorial Groups",
-          icon: "people",
+          icon: "mdi-account-multiple",
           route: "tutorialgroup-list",
           allowedUserRoles: ["ROLE_FACULTY"]
         },  
         {
           title: "Tutor Requests",
-          icon: "people",
+          icon: "mdi-format-list-checks",
           route: "tutorrequest-list",
           allowedUserRoles: ["ROLE_FACULTY"]
         },    

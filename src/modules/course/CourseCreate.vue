@@ -17,7 +17,7 @@
                 icon
                 v-on="on"
                 @click="$router.push({ name: 'course-list' })">
-                <v-icon>arrow_back</v-icon>
+                <v-icon>mdi-arrow-left</v-icon>
               </v-btn>
             </template>
             <span>Cancel</span>
@@ -105,7 +105,7 @@ export default {
                 this.$notify({
                     type: "danger",
                     title: "Error",
-                    message: "There is a user with the given email"
+                    message: "There is unexpected error"
                 });
               } else{
                 this.$notify({
