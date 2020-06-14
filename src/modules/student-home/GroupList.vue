@@ -2,39 +2,38 @@
   <v-item-group>
     <template v-if="!loading"
         >
-      <v-row v-if="tutorialGroups.length > 0">
-        
+      <v-row v-if="enrollments.length > 0">
+       
         <v-col
-          v-for="tutorialGroup in tutorialGroups"
-          :key="tutorialGroup.id"
+          v-for="enrollment in enrollments"
+          :key="enrollment.enrollmentId"
           cols="12"
           lg="3"
           md="4"
           xs="6"
         >
-          <v-item>
+          <v-item v-if="enrollment.tutorialGroup">
             <v-card
                         dark
               color="#385F73"
+              @click="$router.replace({name:'group-chat', params:{enrollment}})"
             >
-            <div class="overline pt-2 pl-4">{{ tutorialGroup.section ? $moment(tutorialGroup.section.month).format("MMMM YYYY") +' Block' : '' }}</div>
-         <v-card-title class="headline pt-1">{{tutorialGroup.tutorialGroupNumber}}</v-card-title>
+            <div class="overline pt-2 pl-4">{{ enrollment.section ? $moment(enrollment.section.month).format("MMMM YYYY") +' Block' : '' }}</div>
+         <v-card-title class="headline pt-1">{{ enrollment.tutorialGroup.tutorialGroupNumber }}</v-card-title>
 
             <v-card-subtitle class="pb-0">
-              <div class="font-weight-medium	">{{ tutorialGroup.section ? tutorialGroup.section.course 
-              ? (tutorialGroup.section.course.courseNumber + ' - '+ tutorialGroup.section.course.courseName) : '' : '' }}
+              <div class="font-weight-medium	">{{ enrollment.section ? enrollment.section.course 
+              ? (enrollment.section.course.courseNumber + ' - '+ enrollment.section.course.courseName) : '' : '' }}
               
               </div>
               <div class="font-weight-light">
-              {{ tutorialGroup.section ? 'Section - ' + tutorialGroup.section.sectionName: '' }}
+              {{ enrollment.section ? 'Section - ' + enrollment.section.sectionName: '' }}
               </div>
               </v-card-subtitle>
 
             <v-card-actions class="pt-1">
-                         <router-link :to="{ name: 'group-chat',
-                              params: { tutorialGroupId: tutorialGroup.tutorialGroupId } }">
-                     <v-btn outlined text>Join</v-btn>   
-                    </router-link>
+                         
+                     <v-btn outlined text>Open</v-btn>   
             </v-card-actions>
             </v-card>
           </v-item>
@@ -47,7 +46,7 @@
       elevation="2"
       v-else
     >
-        No tutorial groups found
+        No tutorial groups found, please go to the course section to join a group.
     </v-alert>
     </template>
        <template v-else>
@@ -76,29 +75,27 @@
   </v-item-group>
 </template>
 <script>
-import { TutorialGroupAPI } from "@/api";
+import { AuthAPI, EnrollmentAPI } from "@/api";
 
 export default {
   name: "GroupList",
   data() {
     return {
-      tutorialGroups: [],
+      enrollments: [],
       loading: true
     };
   },
   async created() {   
-    TutorialGroupAPI.all().then(res => {
-      this.tutorialGroups = res.content;  
-      this.loading = false; 
+    AuthAPI.getuserDetails().then(res => {
+      const user = res.user;  
+      EnrollmentAPI.getByStudentId(user.id).then(res => {
+        this.enrollments = res;  
+        this.loading = false; 
+      })
+      .catch(() => {
+        this.loading = false; 
+      });
     })
-    .catch(() => {
-        // this.$notify({
-        //   type: "danger",
-        //   title: "Error",
-        //   message: "Couldn't load groups"
-        // });
-      this.loading = false; 
-    });
   }
 }
 </script>
