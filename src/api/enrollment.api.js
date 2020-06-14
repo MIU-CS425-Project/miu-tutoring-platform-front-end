@@ -12,11 +12,14 @@ const EnrollmentAPI = {
       params: {page, itemsPerPage, sortBy, sortDesc}
     });
   },
+  getByStudentId(studentId) {
+    return Request.get(`${API_ROOT}${PATH}/getbystudent/${studentId}`);
+  },
   create(data) {
     return Request.post(`${API_ROOT}${PATH}/register`, data);
   },
   update(data) {
-    return Request.put(`${API_ROOT}${PATH}/edit/${data.id}`, data);
+    return Request.put(`${API_ROOT}${PATH}/edit/${data.enrollmentId}`, data);
   },
   remove(id) {
     return Request.delete(`${API_ROOT}${PATH}/delete/${id}`);

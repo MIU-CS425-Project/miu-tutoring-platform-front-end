@@ -12,6 +12,9 @@ const AuthAPI = {
       username
     });
   },
+  getuserDetails() {
+    return Request.get(`${API_ROOT}/me`);
+  },
   logout() {
     return Request.post(`${API_ROOT}${PATH}/logout`, {
       accessToken: AccountService.getAccessToken()
