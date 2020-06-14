@@ -12,8 +12,8 @@
     >
       <v-toolbar flat>
         <v-toolbar-title>
-                        <span class="font-weight-medium">{{tutorialGroupDetail.tutorialGroupNumber}}</span> - {{ tutorialGroupDetail.section ? tutorialGroupDetail.section.course 
-              ? (tutorialGroupDetail.section.course.courseNumber + ' - '+ tutorialGroupDetail.section.course.courseName) : '' : '' }}
+                        <span class="font-weight-medium">{{tutorialGroup.tutorialGroupNumber}}</span> - {{ tutorialGroup.section ? tutorialGroup.section.course 
+              ? (tutorialGroup.section.course.courseNumber + ' - '+ tutorialGroup.section.course.courseName) : '' : '' }}
               
         </v-toolbar-title>
 
@@ -109,13 +109,14 @@
                                 <v-list-item-content>
                                   <v-list-item-title>
                                     {{ item.firstName }} {{ item.middleName }} {{ item.lastName }}
+                                    <span v-if="item.username == tutorialGroup.tutor.username">(Tutor)</span>
                                   </v-list-item-title>
                                   <v-list-item-subtitle>{{ item.username }}</v-list-item-subtitle>
 
                                 </v-list-item-content>
 
                                 <v-list-item-icon>
-                                  <v-icon color="green">fiber_manual_record</v-icon>
+                                  <v-icon color="green">mdi-record</v-icon>
                                 </v-list-item-icon>
                               </v-list-item>
                             </v-list>
@@ -212,11 +213,12 @@ import 'codemirror/theme/base16-dark.css'
 import 'codemirror/theme/base16-light.css'
 
 import AccountService from "@/services";
-import { TutorialGroupAPI, PostAPI } from "@/api";
+import { PostAPI } from "@/api";
 const API_ROOT = process.env.VUE_APP_API_ROOT;
 
 export default {
   name: "groupchat",
+  props: ['enrollment'],
   data() {
     return {
       API_ROOT: API_ROOT,
@@ -225,7 +227,7 @@ export default {
       user: AccountService.getProfile(),
       input: null,
       tutorialGroupId: 0,
-      tutorialGroupDetail:{},
+      tutorialGroup:{},
       code: '',
       isTutor: false,
       cmOptions: {
@@ -266,28 +268,24 @@ export default {
       }
     },
   async created() {
-    this.isTutor = AccountService.getProfile().email == "tutor@miu.edu";
-    const { tutorialGroupId } = this.$route.params;
-    this.tutorialGroupId = tutorialGroupId;
-    TutorialGroupAPI.get(tutorialGroupId).then(res => {
-      this.tutorialGroupDetail = res;
-      PostAPI.getByTutorialGroup(this.tutorialGroupDetail).then(history => {
+    this.tutorialGroup = this.enrollment.tutorialGroup;
+    this.isTutor = this.enrollment.role == "TUTOR";
+    PostAPI.getByTutorialGroup(this.enrollment.tutorialGroup).then(history => {
       this.received_messages = history.reverse()
-    })   
     })
   },
   methods: {
     stream() {
       if (this.stompClient && this.stompClient.connected && this.code != null && this.isTutor) {
         const msg = { sender: this.user.email, content: this.code,
-            type: 'CHAT', tutorialGroup: this.tutorialGroupDetail };
+            type: 'CHAT', tutorialGroup: this.tutorialGroup };
         this.stompClient.send("/app/chat.stream/"+this.tutorialGroupId, JSON.stringify(msg), {});
       }
     },
     send() {
       if (this.stompClient && this.stompClient.connected && this.input != "" && this.input != null) {
         const msg = { sender: this.user.email, content: this.input,
-            type: 'CHAT', tutorialGroup: this.tutorialGroupDetail };
+            type: 'CHAT', tutorialGroup: this.tutorialGroup };
         this.stompClient.send("/app/chat.send/"+this.tutorialGroupId, JSON.stringify(msg), {});
         this.input = null
       }
@@ -296,7 +294,7 @@ export default {
       
       if (this.stompClient && this.stompClient.connected && this.isTutor) {
         const msg = { sender: this.user.email, content: this.cmOptions.mode,
-            type: 'LANGUAGE', tutorialGroup: this.tutorialGroupDetail };
+            type: 'LANGUAGE', tutorialGroup: this.tutorialGroup };
         this.stompClient.send("/app/chat.language/"+this.tutorialGroupId, JSON.stringify(msg), {});
       }
     },
@@ -340,7 +338,7 @@ export default {
           this.subscriptions.push(lanSub);
 
           const msg = { sender: this.user.email, content: "",
-            type: 'JOIN', tutorialGroup: this.tutorialGroupDetail };
+            type: 'JOIN', tutorialGroup: this.tutorialGroup };
           this.stompClient.send("/app/chat.register/"+this.tutorialGroupId, JSON.stringify(msg), {});
         },
         error => {
@@ -353,7 +351,7 @@ export default {
       if (this.stompClient) {
 
         const msg = { sender: this.user.email, content: "",
-            type: 'LEAVE', tutorialGroup: this.tutorialGroupDetail};
+            type: 'LEAVE', tutorialGroup: this.tutorialGroup};
         this.stompClient.send("/app/chat.register/"+this.tutorialGroupId, JSON.stringify(msg), {});
         this.subscriptions.forEach(subscription => {
           subscription.unsubscribe()

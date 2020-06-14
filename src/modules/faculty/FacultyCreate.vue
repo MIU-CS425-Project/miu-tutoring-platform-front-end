@@ -17,7 +17,7 @@
                 icon
                 v-on="on"
                 @click="$router.push({ name: 'faculty-list' })">
-                <v-icon>arrow_back</v-icon>
+                <v-icon>mdi-arrow-left</v-icon>
               </v-btn>
             </template>
             <span>Cancel</span>

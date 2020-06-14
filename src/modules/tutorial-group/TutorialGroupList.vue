@@ -28,7 +28,7 @@
                 class="pa-0 pl-2 pr-3"
                 @click="$router.push({ name: 'tutorialgroup-create' })"
               >
-                <v-icon class="mr-1">add_circle_outline</v-icon>
+                <v-icon class="mr-1">mdi-plus-circle-outline</v-icon>
                 New Tutorial Group
               </v-btn>
               <v-spacer/>
@@ -51,6 +51,9 @@
               no-data-text="No data found"
               @click:row="tutorialgroupDetail"
             >
+              <template v-slot:item.course="{ item }">
+                {{ item.section ? item.section.course ? item.section.course.courseName : '' : '' }}
+              </template>
               <template v-slot:item.section="{ item }">
                 {{ item.section ? item.section.sectionName : '' }}
               </template>
@@ -61,7 +64,7 @@
                       left
                       bottom>
                        <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">more_vert</v-icon>
+                        <v-icon v-on="on">mdi-dots-vertical</v-icon>
                       </template>
 
                       <v-list dense >
@@ -71,7 +74,7 @@
                           @click="$router.push({name:'tutorialgroup-update',
                                                 params:{tutorialGroupId:item.tutorialGroupId}})">
                           <v-list-item-action>
-                            <v-icon>edit</v-icon>
+                            <v-icon>mdi-pencil</v-icon>
                           </v-list-item-action>
                           <v-list-item-title>Edit</v-list-item-title>
                         </v-list-item>
@@ -79,7 +82,7 @@
                           ripple
                           @click="dialog = true">
                           <v-list-item-action>
-                            <v-icon>delete</v-icon>
+                            <v-icon>mdi-delete</v-icon>
                           </v-list-item-action>
                           <v-list-item-title>Delete</v-list-item-title>
                         </v-list-item>
@@ -144,12 +147,12 @@ export default {
           value: "tutorialGroupNumber"
         },
         {
-          text: "Section",
-          value: "section"
+          text: "Course",
+          value: "course"
         },
         {
-          text: "Members",
-          value: "member"
+          text: "Section",
+          value: "section"
         },
         {
           text: "Actions",

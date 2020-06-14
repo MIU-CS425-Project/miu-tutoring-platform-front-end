@@ -19,7 +19,7 @@
               icon
               v-on="on"
               @click="$router.push({ name: 'section-list' })">
-              <v-icon>arrow_back</v-icon>
+              <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
           </template>
             <span>Cancel</span>
@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import { SectionAPI } from "@/api";
+import { SectionAPI, CourseAPI } from "@/api";
 
 export default {
   name: "SectionUpdate",
@@ -140,7 +140,8 @@ export default {
       valid: true,
       enrollmentDate: null,
       enrollmentModal: false,
-      item: {}
+      item: {},
+      courses: []
     };
   },
   created() {
@@ -148,6 +149,9 @@ export default {
     SectionAPI.get(sectionId).then(res => {
       this.item = res;
       this.enrollmentDate = this.item.enrollmentDate;
+    });
+    CourseAPI.all().then(res => {
+      this.courses = res.content;
     });
   },
   methods: {

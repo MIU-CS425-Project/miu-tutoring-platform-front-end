@@ -29,7 +29,7 @@
       offset-x
     >
       <template v-slot:activator="{ on }">
-         <v-icon v-on="on">more_vert</v-icon>
+         <v-icon v-on="on">mdi-dots-vertical</v-icon>
       </template>
 
       <v-card>
@@ -46,11 +46,10 @@
 
             <v-list-item-action>
               <v-btn
-                class="red--text"
                 icon
                 @click="logout"
               >
-                <v-icon>mdi-export</v-icon>
+                <v-icon>mdi-logout</v-icon>
               </v-btn>
             </v-list-item-action>
           </v-list-item>

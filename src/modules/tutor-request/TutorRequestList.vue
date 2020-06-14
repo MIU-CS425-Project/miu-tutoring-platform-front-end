@@ -43,71 +43,19 @@
               no-data-text="No data found"
               @click:row="tutorrequestDetail"
             >
+              <template v-slot:item.studentName="{ item }">
+                {{ item.enrollment ? item.enrollment.student ? 
+                ( item.enrollment.student.firstName + " " + item.enrollment.student.middleName + " " + item.enrollment.student.lastName ) : '' : '' }}
+              </template>
               <template v-slot:item.section="{ item }">
                 {{ item.section ? item.section.sectionName : '' }}
               </template>
-              <template v-slot:item.actions="{ item }">
-                <div @click.stop>
-                    <v-menu
-                      offset-x
-                      left
-                      bottom>
-                       <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">more_vert</v-icon>
-                      </template>
-
-                      <v-list dense >
-
-                        <v-list-item
-                          ripple
-                          @click="$router.push({name:'tutorrequest-update',
-                                                params:{tutorrequestId:item.tutorrequestId}})">
-                          <v-list-item-action>
-                            <v-icon>edit</v-icon>
-                          </v-list-item-action>
-                          <v-list-item-title>Approve</v-list-item-title>
-                        </v-list-item>
-                        <v-list-item
-                          ripple
-                          @click="dialog = true">
-                          <v-list-item-action>
-                            <v-icon>edit</v-icon>
-                          </v-list-item-action>
-                          <v-list-item-title>Reject</v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
-                  </div>
-                  <v-dialog
-                    v-model="dialog"
-                    max-width="290"
-                  >
-                    <v-card>
-                      <v-card-title class="headline">Are you sure to delete this tutorrequest?</v-card-title>
-
-                      <v-card-text>
-                      This action cannot be reversed.  
-                      </v-card-text>
-
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-
-                        <v-btn
-                          color="primary"
-                          @click="deleteTutorrequest(item.tutorrequestId)"
-                        >
-                          Yes
-                        </v-btn>
-
-                        <v-btn
-                          color="primary"
-                          @click="dialog = false"
-                        >
-                          No
-                        </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
+               <template v-slot:item.status="{ item }">
+                <v-chip :color="getColor(item)" dark>{{ item.status }}</v-chip>
+              </template>
+              <template v-slot:item.actions="{  }">
+                <v-icon v-on="on">mdi-eye</v-icon>
+                  
               </template>
             </v-data-table>
           </v-card>
@@ -133,7 +81,7 @@ export default {
       headers: [
         {
           text: "Student Name",
-          value: "tutorrequestNumber"
+          value: "studentName"
         },
         {
           text: "Section",
@@ -141,7 +89,7 @@ export default {
         },
         {
           text: "Status",
-          value: "member"
+          value: "status"
         },
         {
           text: "Actions",
@@ -153,6 +101,11 @@ export default {
     };
   },
   methods: {
+    getColor (request) {
+      if (request.status == "REJECTED") return 'red'
+      else if (request.status == "ACCEPTED") return 'green'
+      else return 'orange'
+    },
     tutorrequestDetail(tutorrequest) {
       this.$modal.show(
         TutorRequestDetail,
@@ -165,19 +118,14 @@ export default {
           height: "auto",
           scrollable: true,
           width: 800
+        },
+        {
+          "before-close": () => {
+            this.loadData();
+          }
         }
       );
-    },
-    async deleteTutorrequest(id) {
-        await TutorRequestAPI.remove(id);
-        this.$notify({
-          type: "success",
-          title: "Success",
-          message: `Tutorrequest deleted successfully`
-        });
-        this.dialog = false;
-        this.loadData();
-    },
+    }
   }
 };
 </script>

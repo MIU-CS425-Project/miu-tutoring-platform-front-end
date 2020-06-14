@@ -28,7 +28,7 @@
                 class="pa-0 pl-2 pr-3"
                 @click="$router.push({ name: 'section-create' })"
               >
-                <v-icon class="mr-1">add_circle_outline</v-icon>
+                <v-icon class="mr-1">mdi-plus-circle-outline</v-icon>
                 New Section
               </v-btn>
               <v-spacer/>
@@ -61,7 +61,7 @@
                       left
                       bottom>
                        <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">more_vert</v-icon>
+                        <v-icon v-on="on">mdi-dots-vertical</v-icon>
                       </template>
 
                       <v-list dense >
@@ -71,7 +71,7 @@
                           @click="$router.push({name:'section-update',
                                                 params:{sectionId:item.sectionId}})">
                           <v-list-item-action>
-                            <v-icon>edit</v-icon>
+                            <v-icon>mdi-pencil</v-icon>
                           </v-list-item-action>
                           <v-list-item-title>Edit</v-list-item-title>
                         </v-list-item>
@@ -79,7 +79,7 @@
                           ripple
                           @click="dialog = true">
                           <v-list-item-action>
-                            <v-icon>delete</v-icon>
+                            <v-icon>mdi-delete</v-icon>
                           </v-list-item-action>
                           <v-list-item-title>Delete</v-list-item-title>
                         </v-list-item>
