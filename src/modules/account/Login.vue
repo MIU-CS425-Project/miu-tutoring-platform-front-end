@@ -79,7 +79,8 @@
                         type="submit" 
                         block 
                         color="primary"
-                        :disabled="!valid || loading"
+                        :disabled="!valid"
+                        :loading="loading"
                         >
                         Login
                       </v-btn>

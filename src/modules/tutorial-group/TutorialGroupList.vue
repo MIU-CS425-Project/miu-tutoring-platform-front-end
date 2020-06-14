@@ -51,6 +51,9 @@
               no-data-text="No data found"
               @click:row="tutorialgroupDetail"
             >
+              <template v-slot:item.course="{ item }">
+                {{ item.section ? item.section.course ? item.section.course.courseName : '' : '' }}
+              </template>
               <template v-slot:item.section="{ item }">
                 {{ item.section ? item.section.sectionName : '' }}
               </template>
@@ -144,12 +147,12 @@ export default {
           value: "tutorialGroupNumber"
         },
         {
-          text: "Section",
-          value: "section"
+          text: "Course",
+          value: "course"
         },
         {
-          text: "Members",
-          value: "member"
+          text: "Section",
+          value: "section"
         },
         {
           text: "Actions",

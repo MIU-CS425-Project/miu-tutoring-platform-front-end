@@ -12,6 +12,9 @@ const TutorialGroupAPI = {
         params: {page, itemsPerPage, sortBy, sortDesc}
       });
     },
+    getBySection(sectionId) {
+      return Request.get(`${API_ROOT}${PATH}/getbysection/${sectionId}`);
+    },
     create(data) {
       return Request.post(`${API_ROOT}${PATH}/register/`, data);
     },
