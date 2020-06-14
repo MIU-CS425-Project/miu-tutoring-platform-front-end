@@ -63,14 +63,14 @@ export default {
         },
         {
           title: "Requests",
-          icon: "mdi-clipboard-list",
-          route: "group-list",
+          icon: "mdi-view-list",
+          route: "student-request-list",
           allowedUserRoles: ["ROLE_STUDENT"]
         },
         {
           title: "Courses",
           icon: "mdi-notebook-multiple",
-          route: "group-list",
+          route: "student-course-list",
           allowedUserRoles: ["ROLE_STUDENT"]
         },
         {
