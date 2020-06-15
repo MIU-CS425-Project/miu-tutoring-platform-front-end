@@ -52,9 +52,23 @@
                 autofocus
               />
             </v-flex>
+          </v-layout>
+          <v-layout row>
             <v-flex 
-              xs6 
-              pl-3>
+              xs6>
+              <v-select
+                :rules="requiredRules"
+                :items="courses"
+                label="Course"
+                item-text="courseName"
+                v-model="selectedCourse"
+                filled
+                return-object
+                @change="filterByCourse($event)"
+              ></v-select>
+            </v-flex>
+            <v-flex 
+              xs6 pl-3>
               <v-select
                 :rules="requiredRules"
                 :items="sections"
@@ -66,24 +80,13 @@
               ></v-select>
             </v-flex>
           </v-layout>
-            <v-layout row>
-            <v-flex xs6>
-              <v-textarea
-                v-model="description"
-                label="Description"
-                name="description"
-                filled                
-              />
-            </v-flex>
-          </v-layout>
         </v-card>
       </v-form>
     </v-flex>
   </v-layout>
 </template>
-
 <script>
-import { TutorialGroupAPI, SectionAPI } from "@/api";
+import { TutorialGroupAPI, SectionAPI, CourseAPI } from "@/api";
 
 export default {
   name: "TutorialGroupUpdate",
@@ -93,6 +96,9 @@ export default {
       enrollmentDate: null,
       enrollmentModal: false,
       item: {},
+      requiredRules: [v => !!v || "This field is required"],
+      selectedCourse: {},
+      courses: [],
       sections: []
     };
   },
@@ -102,11 +108,20 @@ export default {
       this.item = res;
       this.enrollmentDate = this.item.enrollmentDate;
     });
-    SectionAPI.all().then(res => {
-      this.sections = res.content;
+    CourseAPI.all().then(res => {
+      this.courses = res.content;
+      this.selectedCourse = this.item.section.course;
+       SectionAPI.all().then(res => {
+        this.sections = res.content.filter(sec => sec.course.courseId == this.item.section.course.courseId);
+      });
     });
   },
   methods: {
+    async filterByCourse(course) {
+      SectionAPI.all().then(res => {
+        this.sections = res.content.filter(sec => sec.course.courseId == course.courseId);
+      });
+    },
     save() {
       this.$refs.form.validate();
       if (this.valid) {

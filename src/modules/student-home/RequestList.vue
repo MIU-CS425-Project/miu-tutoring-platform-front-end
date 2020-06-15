@@ -79,6 +79,7 @@
 
                         <v-btn
                           color="primary"
+                          @click="deleteTutorrequest()"
                         >
                           Yes
                         </v-btn>
@@ -192,7 +193,7 @@ export default {
       }
     },
     async deleteTutorrequest() {
-        await TutorRequestAPI.remove(this.selectedItem.id);
+        await TutorRequestAPI.remove(this.selectedItem.requestId);
         this.$notify({
           type: "success",
           title: "Success",

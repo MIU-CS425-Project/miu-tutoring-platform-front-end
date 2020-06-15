@@ -54,7 +54,7 @@
                 <v-chip :color="getColor(item)" dark>{{ item.status }}</v-chip>
               </template>
               <template v-slot:item.actions="{  }">
-                <v-icon v-on="on">mdi-eye</v-icon>
+                <v-icon>mdi-eye</v-icon>
                   
               </template>
             </v-data-table>
