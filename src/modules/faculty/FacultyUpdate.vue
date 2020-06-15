@@ -77,51 +77,15 @@
             </v-flex>
           </v-layout>
           <v-layout row>
-            <v-flex xs4>
-              <v-text-field
-                :rules="requiredRules"
-                v-model="item.facultyNumber"
-                label="Faculty Number"
-                name="facultyNumber"
-                filled                
-              />
-            </v-flex>
             <v-flex
               xs4
-              pl-3
             >
               <v-text-field
-                v-model="item.cgpa"
-                label="CGPA"
-                name="cgpa"
-                type="number"
+                v-model="item.department"
+                label="Department"
+                name="department"
                 filled                
               />
-            </v-flex>
-             <v-flex pl-3 xs4>
-              <v-dialog
-                ref="enrollmentDialog"
-                v-model="enrollmentModal"
-                :enrollment-value.sync="enrollmentDate"
-                persistent
-                width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                   :rules="requiredRules"
-                    v-model="enrollmentDate"
-                    label="Enrollment"
-                    readonly
-                    v-on="on"
-                    filled
-                  ></v-text-field>
-                </template>
-                <v-date-picker v-model="enrollmentDate" scrollable>
-                  <v-spacer></v-spacer>
-                  <v-btn text color="primary" @click="enrollmentModal = false">Cancel</v-btn>
-                  <v-btn text color="primary" @click="$refs.enrollmentDialog.save(enrollmentDate)">OK</v-btn>
-                </v-date-picker>
-              </v-dialog>
             </v-flex>
           </v-layout>
         </v-card>
@@ -140,7 +104,8 @@ export default {
       valid: true,
       enrollmentDate: null,
       enrollmentModal: false,
-      item: {}
+      item: {},
+      requiredRules: [v => !!v || "This field is required"]
     };
   },
   created() {

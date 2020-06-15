@@ -85,9 +85,9 @@
                         Login
                       </v-btn>
                     </v-card-actions>
-                    <router-link :to="{ name: 'forgot' }">
+                    <!-- <router-link :to="{ name: 'forgot' }">
                       Forgot password ?
-                    </router-link>
+                    </router-link> -->
                   </v-form>
                     </v-card-text>
                   </v-card>

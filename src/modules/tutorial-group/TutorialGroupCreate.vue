@@ -52,9 +52,23 @@
                 autofocus
               />
             </v-flex>
+          </v-layout>
+          <v-layout row>
             <v-flex 
-              xs6 
-              pl-3>
+              xs6>
+              <v-select
+                :rules="requiredRules"
+                :items="courses"
+                label="Course"
+                item-text="courseName"
+                v-model="selectedCourse"
+                filled
+                return-object
+                @change="filterByCourse($event)"
+              ></v-select>
+            </v-flex>
+            <v-flex 
+              xs6 pl-3>
               <v-select
                 :rules="requiredRules"
                 :items="sections"
@@ -66,16 +80,6 @@
               ></v-select>
             </v-flex>
           </v-layout>
-            <v-layout row>
-            <v-flex xs6>
-              <v-textarea
-                v-model="description"
-                label="Description"
-                name="description"
-                filled                
-              />
-            </v-flex>
-          </v-layout>
         </v-card>
       </v-form>
     </v-flex>
@@ -83,7 +87,7 @@
 </template>
 
 <script>
-import { TutorialGroupAPI, SectionAPI } from "@/api";
+import { TutorialGroupAPI, SectionAPI, CourseAPI } from "@/api";
 
 export default {
   name: "TutorialGroupCreate",
@@ -101,15 +105,22 @@ export default {
         v => !!v || 'Password is required',
         v => v.length >= 3 || 'Password must be greater than three characters'
       ],
+      selectedCourse: {},
+      courses: [],
       sections: []
     };
   },
   created() {
-    SectionAPI.all().then(res => {
-      this.sections = res.content;
+    CourseAPI.all().then(res => {
+      this.courses = res.content;
     });
   },
   methods: {
+    async filterByCourse(course) {
+      SectionAPI.all().then(res => {
+        this.sections = res.content.filter(sec => sec.course.courseId == course.courseId);
+      });
+    },
     save() {
       this.$refs.form.validate();
       if(this.valid){

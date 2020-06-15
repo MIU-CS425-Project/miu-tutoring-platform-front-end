@@ -7,12 +7,12 @@
         class="primary--text text--darken-3">
         <div>
           <div class="headline">{{ item.firstName }} {{ item.middleName }} {{ item.lastName }}</div>
-          <span>{{ item.facultyNumber }}</span>
+          <span>{{ item.username }}</span>
         </div>
       </v-card-title>
       <v-divider light/>
       <v-card-text>
-        CGPA: {{ item.cgpa }}
+        Department: {{ item.department }}
       </v-card-text>
       <v-card-actions class="pa-3">
         <v-spacer />

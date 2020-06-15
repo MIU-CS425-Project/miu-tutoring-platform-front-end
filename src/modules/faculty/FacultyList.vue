@@ -77,7 +77,7 @@
                         </v-list-item>
                         <v-list-item
                           ripple
-                          @click="dialog = true">
+                          @click="selectedItem = item, dialog = true">
                           <v-list-item-action>
                             <v-icon>mdi-delete</v-icon>
                           </v-list-item-action>
@@ -102,7 +102,7 @@
 
                         <v-btn
                           color="primary"
-                          @click="deleteFaculty(item.id)"
+                          @click="deleteFaculty()"
                         >
                           Yes
                         </v-btn>
@@ -157,7 +157,8 @@ export default {
           sortable: false
         }
       ],
-      dialog: false
+      dialog: false,
+      selectedItem: {}
     };
   },
   methods: {
@@ -176,8 +177,8 @@ export default {
         }
       );
     },
-    async deleteFaculty(id) {
-        await FacultyAPI.remove(id);
+    async deleteFaculty() {
+        await FacultyAPI.remove(this.selectedItem.id);
         this.$notify({
           type: "success",
           title: "Success",

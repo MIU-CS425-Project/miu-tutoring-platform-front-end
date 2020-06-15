@@ -13,9 +13,12 @@
       </v-card-title>
       <v-divider light/>
       <v-card-text>
-        Class Room: {{ item.classRoom }}
+        <strong>Class Room:</strong> {{ item.classRoom }}
         <br />
-        Month: {{ item.month }}
+        <strong>Month:</strong> {{ item.month }}
+        <p>
+          <strong>Lecturer:</strong> {{ item.faculty ?  (item.faculty.firstName + " " + item.faculty.middleName + " " + item.faculty.lastName): '' }}
+        </p>
       </v-card-text>
       <v-card-actions class="pa-3">
         <v-spacer />

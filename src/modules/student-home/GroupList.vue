@@ -2,7 +2,7 @@
   <v-item-group>
     <template v-if="!loading"
         >
-      <v-row v-if="enrollments.length > 0">
+      <v-row v-if="foundItem">
        
         <v-col
           v-for="enrollment in enrollments"
@@ -82,7 +82,8 @@ export default {
   data() {
     return {
       enrollments: [],
-      loading: true
+      loading: true,
+      foundItem: false
     };
   },
   async created() {   
@@ -90,7 +91,12 @@ export default {
       const user = res.user;  
       EnrollmentAPI.getByStudentId(user.id).then(res => {
         this.enrollments = res;  
-        this.loading = false; 
+        this.loading = false;
+        this.enrollments.forEach(enrollment => {
+          if(enrollment.tutorialGroup){
+            this.foundItem = true;
+          }
+        });
       })
       .catch(() => {
         this.loading = false; 

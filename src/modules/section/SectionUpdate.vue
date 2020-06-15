@@ -11,17 +11,15 @@
           class="grey lighten-4 elevation-2 mb-1"
         >
           <v-tooltip bottom>
-
-          <template v-slot:activator="{ on }">
-
-            <v-btn
-              slot="activator"
-              icon
-              v-on="on"
-              @click="$router.push({ name: 'section-list' })">
-              <v-icon>mdi-arrow-left</v-icon>
-            </v-btn>
-          </template>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                slot="activator"
+                icon
+                v-on="on"
+                @click="$router.push({ name: 'section-list' })">
+                <v-icon>mdi-arrow-left</v-icon>
+              </v-btn>
+            </template>
             <span>Cancel</span>
           </v-tooltip>
           <v-toolbar-title
@@ -45,85 +43,80 @@
           <!-- row 1 -->
           <v-layout row>
             <v-flex xs4>
-              <v-text-field
+           <v-text-field
                 :rules="requiredRules"
-                v-model="item.firstName"
-                label="First Name"
-                name="firstName"
+                v-model="item.sectionName"
+                label="Section Name"
+                name="sectionName"
+                filled                
+              />
+            </v-flex>
+            <v-flex 
+              xs4 
+              pl-3>
+           <v-text-field
+                :rules="requiredRules"
+                v-model="item.classRoom"
+                label="Class Room"
+                name="classRoom"
+                filled                
+              />
+            </v-flex>
+            <v-flex 
+              xs4 
+              pl-3>
+              <v-select
+                :rules="requiredRules"
+                :items="courses"
+                label="Course"
+                item-text="courseName"
+                v-model="item.course"
                 filled
-                autofocus
-              />
-            </v-flex>
-            <v-flex 
-              xs4 
-              pl-3>
-              <v-text-field
-                v-model="item.middleName"
-                label="Middle Name"
-                name="middleName"
-                filled                
-              />
-            </v-flex>
-            <v-flex 
-              xs4 
-              pl-3>
-              <v-text-field
-                :rules="requiredRules"
-                v-model="item.lastName"
-                label="Last Name"
-                name="lastName"
-                filled                
-              />
+                return-object
+              ></v-select>
             </v-flex>
           </v-layout>
           <v-layout row>
-            <v-flex xs4>
-              <v-text-field
+            <v-flex 
+              xs4 
+              >
+              <v-select
                 :rules="requiredRules"
-                v-model="item.sectionNumber"
-                label="Section Number"
-                name="sectionNumber"
-                filled                
-              />
+                :items="faculties"
+                label="Lecturer"
+                :item-text="item => item.firstName"
+                v-model="item.faculty"
+                filled
+                return-object
+              ></v-select>
             </v-flex>
-            <v-flex
-              xs4
-              pl-3
-            >
-              <v-text-field
-                v-model="item.cgpa"
-                label="CGPA"
-                name="cgpa"
-                type="number"
-                filled                
-              />
-            </v-flex>
-             <v-flex pl-3 xs4>
+             <v-flex xs4 pl-3>
               <v-dialog
                 ref="enrollmentDialog"
                 v-model="enrollmentModal"
-                :enrollment-value.sync="enrollmentDate"
+                :enrollment-value.sync="month"
                 persistent
                 width="290px"
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
-                   :rules="requiredRules"
-                    v-model="enrollmentDate"
-                    label="Enrollment"
+                    :rules="requiredRules"
+                    v-model="month"
+                    label="Block Month"
                     readonly
                     v-on="on"
                     filled
                   ></v-text-field>
                 </template>
-                <v-date-picker v-model="enrollmentDate" scrollable>
+                <v-date-picker v-model="month" type="month" scrollable>
                   <v-spacer></v-spacer>
                   <v-btn text color="primary" @click="enrollmentModal = false">Cancel</v-btn>
-                  <v-btn text color="primary" @click="$refs.enrollmentDialog.save(enrollmentDate)">OK</v-btn>
+                  <v-btn text color="primary" @click="$refs.enrollmentDialog.save(month)">OK</v-btn>
                 </v-date-picker>
               </v-dialog>
             </v-flex>
           </v-layout>
+          
         </v-card>
       </v-form>
     </v-flex>
@@ -131,7 +124,7 @@
 </template>
 
 <script>
-import { SectionAPI, CourseAPI } from "@/api";
+import { SectionAPI, CourseAPI, FacultyAPI } from "@/api";
 
 export default {
   name: "SectionUpdate",
@@ -141,7 +134,8 @@ export default {
       enrollmentDate: null,
       enrollmentModal: false,
       item: {},
-      courses: []
+      courses: [],
+      faculties: []
     };
   },
   created() {
@@ -152,6 +146,9 @@ export default {
     });
     CourseAPI.all().then(res => {
       this.courses = res.content;
+    });
+    FacultyAPI.all().then(res => {
+      this.faculties = res.content;
     });
   },
   methods: {
