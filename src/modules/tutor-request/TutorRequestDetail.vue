@@ -39,7 +39,6 @@
         <v-spacer />
         <v-btn
           color="primary"
-          @click="approve(item)"
           type="submit"
         >Approve</v-btn>
         <v-btn
