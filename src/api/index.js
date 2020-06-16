@@ -10,6 +10,7 @@ import CourseAPI from "./course.api"
 import FacultyAPI from "./faculty.api"
 import TutorRequestAPI from "./tutor-request.api"
 import EnrollmentAPI from "./enrollment.api"
+import ReportAPI from "./report.api"
 
 const API_ROOT = process.env.VUE_APP_API_ROOT+"/api/v1";
 export {
@@ -25,5 +26,6 @@ export {
   CourseAPI,
   FacultyAPI,
   TutorRequestAPI,
-  EnrollmentAPI
+  EnrollmentAPI,
+  ReportAPI
 };
