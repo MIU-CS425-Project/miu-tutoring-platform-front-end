@@ -42,7 +42,8 @@
               </v-card-subtitle>
 
             <v-card-actions class="pt-1">
-                <v-btn outlined text @click="joinGroup(tutorialGroup)">Join</v-btn>   
+                <v-btn outlined text disabled v-if="item.tutorialGroup ? item.tutorialGroup.tutorialGroupId == tutorialGroup.tutorialGroupId : false">Already Member</v-btn>   
+                <v-btn outlined text v-else @click="joinGroup(tutorialGroup)">Join</v-btn>   
             </v-card-actions>
             </v-card>
           </v-item>
@@ -116,6 +117,7 @@ export default {
     }
   },
   async created() {   
+    
     TutorialGroupAPI.getBySection(this.item.section.sectionId).then(res => {
       this.tutorialGroups = res;  
       this.loading = false; 

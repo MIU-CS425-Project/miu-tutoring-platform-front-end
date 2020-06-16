@@ -10,6 +10,7 @@ import sectionRoutes from "@/modules/section/section.routes";
 import courseRoutes from "@/modules/course/course.routes";
 import facultyRoutes from "@/modules/faculty/faculty.routes";
 import tutorRequestRoutes from "@/modules/tutor-request/tutor-request.routes";
+import reportRoutes from "@/modules/report/report.routes";
 
 const routes = [
   {
@@ -27,7 +28,8 @@ const routes = [
       ...sectionRoutes,
       ...courseRoutes,
       ...facultyRoutes,
-      ...tutorRequestRoutes
+      ...tutorRequestRoutes,
+      ...reportRoutes
     ]
   },
   {

@@ -28,15 +28,23 @@
               </div>
               </v-card-subtitle>
                 <v-card-actions>
-      <v-btn outlined text @click="groupSelect(enrollment)">Join Tutorial</v-btn>
- <span class="pl-2 pr-2"> or </span>
-      <v-btn outlined
-        text
-        @click="selectedEnrollment = enrollment, dialog = true"
-      >
-        Be a Tutor
-      </v-btn>
-
+      <v-btn outlined text @click="groupSelect(enrollment)">
+       <span v-if="enrollment.tutorialGroup">
+         Switch Group
+         </span> 
+         <span v-else>
+         Join Tutorial
+         </span>
+        </v-btn>
+      <span v-if="!enrollment.tutorRequest">
+        <span class="pl-2 pr-2"> or </span>
+        <v-btn outlined
+          text
+          @click="selectedEnrollment = enrollment, dialog = true"
+        >
+          Be a Tutor
+        </v-btn>
+      </span>
       <v-spacer></v-spacer>
 
       <v-btn
@@ -157,18 +165,21 @@ export default {
     };
   },
   async created() {   
-    AuthAPI.getuserDetails().then(res => {
-      const user = res.user;  
-      EnrollmentAPI.getByStudentId(user.id).then(res => {
-        this.enrollments = res;  
-        this.loading = false; 
-      })
-      .catch(() => {
-        this.loading = false; 
-      });
-    })
+    this.reload();
   },
   methods: {
+    reload(){
+      AuthAPI.getuserDetails().then(res => {
+        const user = res.user;  
+        EnrollmentAPI.getByStudentId(user.id).then(res => {
+          this.enrollments = res;  
+          this.loading = false; 
+        })
+        .catch(() => {
+          this.loading = false; 
+        });
+      })
+    },
     BeATutor() {
       this.$refs.form.validate();
       if(this.valid){
@@ -190,7 +201,7 @@ export default {
               message: "Application created successfully"
             });
             this.dialog = false;
-
+            this.reload();
           }
         })
       }
