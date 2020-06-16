@@ -16,7 +16,9 @@
       <v-card-subtitle>{{ item.section ? item.section.sectionName : '' }}</v-card-subtitle>
       <v-divider light/>
       <v-card-text>
-        {{ item.experience }}
+        <strong>CGPA: </strong>{{ item.enrollment ? item.enrollment.student ? ( item.enrollment.student.cgpa ) : '' : '' }}
+        <div>
+        <strong>Experience: </strong> {{ item.experience }}
         <v-layout row pa-2 pt-5>
           <v-flex 
             xs12>
@@ -31,12 +33,12 @@
             ></v-select>
           </v-flex>
         </v-layout>
+        </div>
       </v-card-text>
       <v-card-actions class="pb-3 pr-3">
         <v-spacer />
         <v-btn
           color="primary"
-          @click="approve(item)"
           type="submit"
         >Approve</v-btn>
         <v-btn
@@ -95,7 +97,6 @@ export default {
               title: "Success",
               message: "Request approved"
             });
-            this.$router.push({ name: "tutorrequest-list" });
             this.$modal.hide(this.modalName);
           })
           .catch(err => {
@@ -114,7 +115,6 @@ export default {
             title: "Success",
             message: "Request denied"
           });
-          this.$router.push({ name: "tutorrequest-list" });
           this.$modal.hide(this.modalName);
         })
         .catch(err => {

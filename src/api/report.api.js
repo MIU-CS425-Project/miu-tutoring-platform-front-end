@@ -1,11 +1,14 @@
 import { API_ROOT } from ".";
 import Request from "./request";
 
-const PATH = "/faculty";
+const PATH = "/report";
 
-const FacultyAPI = {
+const ReportAPI = {
   get(id) {
     return Request.get(`${API_ROOT}${PATH}/get/${id}`);
+  },
+  getByStudentId(studentId) {
+    return Request.get(`${API_ROOT}${PATH}/getbystudent/${studentId}`);
   },
   all(page, itemsPerPage, sortBy, sortDesc) {
     return Request.get(`${API_ROOT}${PATH}/list`, {
@@ -13,10 +16,10 @@ const FacultyAPI = {
     });
   },
   create(data) {
-    return Request.post(`${API_ROOT}${PATH}/register`, data);
+    return Request.post(`${API_ROOT}${PATH}/save`, data);
   },
   update(data) {
-    return Request.put(`${API_ROOT}${PATH}/edit/${data.id}`, data);
+    return Request.put(`${API_ROOT}${PATH}/edit/${data.reportId}`, data);
   },
   remove(id) {
     return Request.delete(`${API_ROOT}${PATH}/delete/${id}`);
@@ -28,4 +31,4 @@ const FacultyAPI = {
   }
 };
 
-export default FacultyAPI;
+export default ReportAPI;

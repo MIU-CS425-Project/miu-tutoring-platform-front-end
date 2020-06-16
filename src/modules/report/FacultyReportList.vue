@@ -6,7 +6,7 @@
       <v-layout >
         <v-flex xs12>
           <div class="headline font-weight-thin">
-            Tutor Requests
+            Reports
           </div>
         </v-flex>
       </v-layout>
@@ -41,21 +41,22 @@
               :server-items-length="totalItems"
               loading-text="Loading... Please wait"
               no-data-text="No data found"
-              @click:row="tutorrequestDetail"
+              @click:row="reportDetail"
             >
-              <template v-slot:item.studentName="{ item }">
-                {{ item.enrollment ? item.enrollment.student ? 
-                ( item.enrollment.student.firstName + " " + item.enrollment.student.middleName + " " + item.enrollment.student.lastName ) : '' : '' }}
+              <template v-slot:item.student="{ item }">
+                {{ item.student ? item.student.firstName + " " + item.student.middleName + " " + item.student.lastName :''}}
+              </template>
+              <template v-slot:item.course="{ item }">
+                {{ item.course.courseName }}
               </template>
               <template v-slot:item.section="{ item }">
-                {{ item.section ? item.section.sectionName : '' }}
+                {{ item.tutorialGroup.section ? item.tutorialGroup.section.sectionName : '' }}
               </template>
-               <template v-slot:item.status="{ item }">
-                <v-chip :color="getColor(item)" dark>{{ item.status }}</v-chip>
+              <template v-slot:item.group="{ item }">
+                {{ item.tutorialGroup.tutorialGroupNumber }}
               </template>
-              <template v-slot:item.actions="{  }">
+              <template v-slot:item.actions="">
                 <v-icon>mdi-eye</v-icon>
-                  
               </template>
             </v-data-table>
           </v-card>
@@ -66,30 +67,34 @@
 </template>
 
 <script>
-import { TutorRequestAPI } from "@/api";
+import { ReportAPI } from "@/api";
 import { tableMixin } from "@/shared/mixins";
-import TutorRequestDetail from "./TutorRequestDetail.vue";
+import ReportDetail from "./ReportDetail.vue";
 
 export default {
-  name: "TutorrequestList",
+  name: "FacultyReportList",
   mixins: [tableMixin],
 
   data() {
     return {
-      resource: TutorRequestAPI,
-      resourceName: "Tutorrequest",
+      resource: ReportAPI,
+      resourceName: "Report",
       headers: [
         {
-          text: "Student Name",
-          value: "studentName"
+          text: "Given By",
+          value: "student"
+        },
+        {
+          text: "Group",
+          value: "group"
         },
         {
           text: "Section",
           value: "section"
         },
         {
-          text: "Status",
-          value: "status"
+          text: "Course",
+          value: "course"
         },
         {
           text: "Actions",
@@ -101,31 +106,31 @@ export default {
     };
   },
   methods: {
-    getColor (request) {
-      if (request.status == "REJECTED") return 'red'
-      else if (request.status == "ACCEPTED") return 'green'
-      else return 'orange'
-    },
-    tutorrequestDetail(tutorrequest) {
+    reportDetail(report) {
       this.$modal.show(
-        TutorRequestDetail,
+        ReportDetail,
         {
-          modalName: "tutorrequest-detail-modal",
-          item: tutorrequest
+          modalName: "student-report-detail-modal",
+          item: report
         },
         {
-          name: "tutorrequest-detail-modal",
+          name: "student-report-detail-modal",
           height: "auto",
           scrollable: true,
           width: 800
-        },
-        {
-          "before-close": () => {
-            this.loadData();
-          }
         }
       );
-    }
+    },
+    async deleteReport(id) {
+        await ReportAPI.remove(id);
+        this.$notify({
+          type: "success",
+          title: "Success",
+          message: `Report deleted successfully`
+        });
+        this.dialog = false;
+        this.loadData();
+    },
   }
 };
 </script>

@@ -77,7 +77,20 @@
             </v-flex>
           </v-layout>
           <v-layout row>
-             <v-flex xs4>
+            <v-flex 
+              xs4 
+              >
+              <v-select
+                :rules="requiredRules"
+                :items="faculties"
+                label="Lecturer"
+                :item-text="item => item.firstName"
+                v-model="item.faculty"
+                filled
+                return-object
+              ></v-select>
+            </v-flex>
+             <v-flex xs4 pl-3>
               <v-dialog
                 ref="enrollmentDialog"
                 v-model="enrollmentModal"
@@ -111,7 +124,7 @@
 </template>
 
 <script>
-import { SectionAPI, CourseAPI } from "@/api";
+import { SectionAPI, CourseAPI, FacultyAPI } from "@/api";
 
 export default {
   name: "SectionCreate",
@@ -122,12 +135,16 @@ export default {
       enrollmentModal: false,
       item: {},
       requiredRules: [v => !!v || "This field is required"],
-      courses: []
+      courses: [],
+      faculties: []
     };
   },
   created() {
     CourseAPI.all().then(res => {
       this.courses = res.content;
+    });
+    FacultyAPI.all().then(res => {
+      this.faculties = res.content;
     });
   },
   methods: {

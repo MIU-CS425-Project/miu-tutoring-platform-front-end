@@ -68,6 +68,12 @@ export default {
           allowedUserRoles: ["ROLE_STUDENT"]
         },
         {
+          title: "Reports",
+          icon: "mdi-clipboard-text",
+          route: "student-report-list",
+          allowedUserRoles: ["ROLE_STUDENT"]
+        },
+        {
           title: "Courses",
           icon: "mdi-notebook-multiple",
           route: "student-course-list",
@@ -109,6 +115,12 @@ export default {
           route: "tutorrequest-list",
           allowedUserRoles: ["ROLE_FACULTY"]
         },    
+        {
+          title: "Reports",
+          icon: "mdi-clipboard-text",
+          route: "faculty-report-list",
+          allowedUserRoles: ["ROLE_FACULTY"]
+        },
       ]
     };
   },

@@ -11,23 +11,21 @@
           class="grey lighten-4 elevation-2 mb-1"
         >
           <v-tooltip bottom>
-
-          <template v-slot:activator="{ on }">
-
-            <v-btn
-              slot="activator"
-              icon
-              v-on="on"
-              @click="$router.push({ name: 'faculty-list' })">
-              <v-icon>mdi-arrow-left</v-icon>
-            </v-btn>
-          </template>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                slot="activator"
+                icon
+                v-on="on"
+                @click="$router.push({ name: 'student-report-list' })">
+                <v-icon>mdi-arrow-left</v-icon>
+              </v-btn>
+            </template>
             <span>Cancel</span>
           </v-tooltip>
           <v-toolbar-title
             class="blue-grey--text text--darken-2 font-weight-bold"
           >
-            Update Faculty
+            Update Report
           </v-toolbar-title>
           <v-spacer/>
           <v-btn
@@ -44,46 +42,12 @@
         >
           <!-- row 1 -->
           <v-layout row>
-            <v-flex xs4>
-              <v-text-field
+            <v-flex xs6>
+              <v-textarea
                 :rules="requiredRules"
-                v-model="item.firstName"
-                label="First Name"
-                name="firstName"
-                filled
-                autofocus
-              />
-            </v-flex>
-            <v-flex 
-              xs4 
-              pl-3>
-              <v-text-field
-                v-model="item.middleName"
-                label="Middle Name"
-                name="middleName"
-                filled                
-              />
-            </v-flex>
-            <v-flex 
-              xs4 
-              pl-3>
-              <v-text-field
-                :rules="requiredRules"
-                v-model="item.lastName"
-                label="Last Name"
-                name="lastName"
-                filled                
-              />
-            </v-flex>
-          </v-layout>
-          <v-layout row>
-            <v-flex
-              xs4
-            >
-              <v-text-field
-                v-model="item.department"
-                label="Department"
-                name="department"
+                v-model="item.report"
+                label="Report"
+                name="report"
                 filled                
               />
             </v-flex>
@@ -95,22 +59,21 @@
 </template>
 
 <script>
-import { FacultyAPI } from "@/api";
+import { ReportAPI } from "@/api";
 
 export default {
-  name: "FacultyUpdate",
+  name: "ReportUpdate",
   data() {
     return {
       valid: true,
       enrollmentDate: null,
       enrollmentModal: false,
-      item: {},
-      requiredRules: [v => !!v || "This field is required"]
+      item: {}
     };
   },
   created() {
-    const { facultyId } = this.$route.params;
-    FacultyAPI.get(facultyId).then(res => {
+    const { reportId } = this.$route.params;
+    ReportAPI.get(reportId).then(res => {
       this.item = res;
       this.enrollmentDate = this.item.enrollmentDate;
     });
@@ -120,16 +83,16 @@ export default {
       this.$refs.form.validate();
       if (this.valid) {
         this.item.enrollmentDate = this.enrollmentDate;
-        FacultyAPI.update(this.item)
+        ReportAPI.update(this.item)
           .then(() => {
             this.item.id = this.$route.params;
             this.item = {};
             this.$notify({
               type: "success",
               title: "Success",
-              message: "Faculty updated successfully"
+              message: "Report updated successfully"
             });
-            this.$router.push({ name: "faculty-list" });
+            this.$router.push({ name: "student-report-list" });
           })
           .catch(err => {
             if (err.statusCode === 422) {

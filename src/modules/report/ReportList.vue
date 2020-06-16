@@ -6,7 +6,7 @@
       <v-layout >
         <v-flex xs12>
           <div class="headline font-weight-thin">
-            Faculties
+            Reports
           </div>
         </v-flex>
       </v-layout>
@@ -26,19 +26,12 @@
               <v-btn
                 color="primary"
                 class="pa-0 pl-2 pr-3"
-                @click="$router.push({ name: 'faculty-create' })"
+                @click="$router.push({ name: 'student-report-create' })"
               >
                 <v-icon class="mr-1">mdi-plus-circle-outline</v-icon>
-                New Faculty
+                New Report
               </v-btn>
               <v-spacer/>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Search"
-                single-line
-                hide-details
-              ></v-text-field>
             </v-toolbar>
 
             <v-data-table
@@ -49,10 +42,16 @@
               :server-items-length="totalItems"
               loading-text="Loading... Please wait"
               no-data-text="No data found"
-              @click:row="facultyDetail"
+              @click:row="reportDetail"
             >
-              <template v-slot:item.name="{ item }">
-                {{ item.firstName }} {{ item.middleName }} {{ item.lastName }}
+              <template v-slot:item.course="{ item }">
+                {{ item.course.courseName }}
+              </template>
+              <template v-slot:item.section="{ item }">
+                {{ item.tutorialGroup.section ? item.tutorialGroup.section.sectionName : '' }}
+              </template>
+              <template v-slot:item.group="{ item }">
+                {{ item.tutorialGroup.tutorialGroupNumber }}
               </template>
               <template v-slot:item.actions="{ item }">
                 <div @click.stop>
@@ -68,8 +67,8 @@
 
                         <v-list-item
                           ripple
-                          @click="$router.push({name:'faculty-update',
-                                                params:{facultyId:item.id}})">
+                          @click="$router.push({name:'student-report-update',
+                                                params:{reportId:item.reportId}})">
                           <v-list-item-action>
                             <v-icon>mdi-pencil</v-icon>
                           </v-list-item-action>
@@ -77,7 +76,7 @@
                         </v-list-item>
                         <v-list-item
                           ripple
-                          @click="selectedItem = item, dialog = true">
+                          @click="dialog = true">
                           <v-list-item-action>
                             <v-icon>mdi-delete</v-icon>
                           </v-list-item-action>
@@ -91,7 +90,7 @@
                     max-width="290"
                   >
                     <v-card>
-                      <v-card-title class="headline">Are you sure to delete this faculty?</v-card-title>
+                      <v-card-title class="headline">Are you sure to delete this report?</v-card-title>
 
                       <v-card-text>
                       This action cannot be reversed.  
@@ -102,7 +101,7 @@
 
                         <v-btn
                           color="primary"
-                          @click="deleteFaculty()"
+                          @click="deleteReport(item.reportId)"
                         >
                           Yes
                         </v-btn>
@@ -126,30 +125,30 @@
 </template>
 
 <script>
-import { FacultyAPI } from "@/api";
-import { tableMixin } from "@/shared/mixins";
-import FacultyDetail from "./FacultyDetail.vue";
+import { AuthAPI, ReportAPI } from "@/api";
+import ReportDetail from "./ReportDetail.vue";
 
 export default {
-  name: "FacultyList",
-  mixins: [tableMixin],
+  name: "ReportList",
 
   data() {
     return {
-      resource: FacultyAPI,
-      resourceName: "Faculty",
+      totalItems: 0,
+      items: [],
+      loading: false,
+      options: {},
       headers: [
         {
-          text: "Name",
-          value: "firstName"
+          text: "Course",
+          value: "course"
         },
         {
-          text: "Email",
-          value: "username"
+          text: "Section",
+          value: "section"
         },
         {
-          text: "Department",
-          value: "department"
+          text: "Group",
+          value: "group"
         },
         {
           text: "Actions",
@@ -157,32 +156,61 @@ export default {
           sortable: false
         }
       ],
-      dialog: false,
-      selectedItem: {}
+      dialog: false
     };
   },
+  async created() {   
+    AuthAPI.getuserDetails().then(res => {
+      this.user = res.user;  
+      this.loadData()
+    }).catch(() => {
+      this.loading = false; 
+    });
+  },
   methods: {
-    facultyDetail(faculty) {
+    async loadData() {
+      if(this.user.id){
+      this.loading = true;
+      
+      ReportAPI.getByStudentId(this.user.id).then(
+        (res)=>{
+          this.items = res;
+          this.totalItems = res.length;
+          this.loading = false;
+      })
+      .catch(err => {
+        if(err == "Forbidden"){
+          this.$notify({
+            type: "danger",
+            title: "Error",
+            message: "Nou authorized"
+          });
+        }
+        this.loading = false;
+      })
+      }
+    },
+    reportDetail(report) {
       this.$modal.show(
-        FacultyDetail,
+        ReportDetail,
         {
-          modalName: "faculty-detail-modal",
-          item: faculty
+          modalName: "student-report-detail-modal",
+          item: report
         },
         {
-          name: "faculty-detail-modal",
+          name: "student-report-detail-modal",
           height: "auto",
           scrollable: true,
           width: 800
         }
       );
     },
-    async deleteFaculty() {
-        await FacultyAPI.remove(this.selectedItem.id);
+    async deleteReport(id) {
+        await ReportAPI.remove(id);
         this.$notify({
           type: "success",
           title: "Success",
-          message: `Faculty deleted successfully`
+          message: `Report deleted successfully`
         });
         this.dialog = false;
         this.loadData();

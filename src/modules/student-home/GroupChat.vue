@@ -21,7 +21,7 @@
         <v-row v-if="isTutor">
       </v-row>
 
-      <v-btn outlined color="error" v-if="connected" @click="disconnect">Leave</v-btn>
+      <v-btn outlined color="error" v-if="connected" @click="disconnect(),back()">Leave</v-btn>
       </v-toolbar>
 
       <v-divider></v-divider>
@@ -109,7 +109,7 @@
                                 <v-list-item-content>
                                   <v-list-item-title>
                                     {{ item.firstName }} {{ item.middleName }} {{ item.lastName }}
-                                    <span v-if="item.username == tutorialGroup.tutor.username">(Tutor)</span>
+                                    <span v-if="tutorialGroup.tutor && (item.username == tutorialGroup.tutor.username)">(Tutor)</span>
                                   </v-list-item-title>
                                   <v-list-item-subtitle>{{ item.username }}</v-list-item-subtitle>
 
@@ -269,7 +269,13 @@ export default {
     },
   async created() {
     this.tutorialGroup = this.enrollment.tutorialGroup;
-    this.isTutor = this.enrollment.role == "TUTOR";
+    if(this.enrollment.tutorialGroup){
+      if(this.enrollment.tutorialGroup.tutor){
+        if(this.enrollment.tutorialGroup.tutor.username == this.user.email){
+          this.isTutor = true;
+        }
+      }
+    }
     PostAPI.getByTutorialGroup(this.enrollment.tutorialGroup).then(history => {
       this.received_messages = history.reverse()
     })
@@ -359,10 +365,11 @@ export default {
 
         this.stompClient.disconnect();
         this.socket.close();
-
-        this.$router.push({ name: "group-list" }).catch(() => {});
       }
       this.connected = false;
+    },
+    back(){
+      this.$router.push({ name: "group-list" }).catch(() => {});
     },
     onCmCodeChange(newCode) {
       this.code = newCode

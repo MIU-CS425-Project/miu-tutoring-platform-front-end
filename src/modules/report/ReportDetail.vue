@@ -6,19 +6,21 @@
         primary-title
         class="primary--text text--darken-3">
         <div>
-          <div class="headline">{{ item.firstName }} {{ item.middleName }} {{ item.lastName }}</div>
-          <span>{{ item.username }}</span>
+          <div class="headline">{{ isStudent() ? '': item.student ?  item.student.firstName + " " + item.student.middleName + " " + item.student.lastName + ' - ':''}}
+            {{ item.tutorialGroup.tutorialGroupNumber }}</div>
+          <span>{{ item.course.courseName }}</span>
         </div>
       </v-card-title>
       <v-divider light/>
       <v-card-text>
-        Department: {{ item.department }}
+        {{ item.report }}
       </v-card-text>
       <v-card-actions class="pa-3">
         <v-spacer />
         <v-btn
           color="primary"
           @click="edit()"
+          v-if="isStudent()"
         >Edit</v-btn>
         <v-btn
           color="primary"
@@ -30,8 +32,15 @@
 </template>
 
 <script>
+import AccountService from "@/services/account.service";
+
 export default {
-  name: "FacultyDetail",
+  name: "ReportDetail",
+  data() {
+    return {
+      roles: []
+      }
+  },
   props: {
     modalName: {
       type: String,
@@ -42,15 +51,21 @@ export default {
       default: () => {}
     }
   },
+  created() {
+    this.roles = AccountService.getRoles();
+  },
   methods: {
+    isStudent(){
+      return this.roles.includes("ROLE_STUDENT")
+    },
     close() {
       this.$modal.hide(this.modalName);
     },
     edit() {
       this.$modal.hide(this.modalName);
       this.$router.push({
-        name: "faculty-update",
-        params: { facultyId: this.item.facultyId }
+        name: "student-report-update",
+        params: { reportId: this.item.reportId }
       });
     }
   }
